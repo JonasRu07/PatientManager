@@ -1,0 +1,152 @@
+[
+    {
+        "name": "Albert",
+        "possible hours": [
+            3
+        ]
+    },
+    {
+        "name": "Bert",
+        "possible hours": [
+            3
+        ]
+    },
+    {
+        "name": "Celine",
+        "possible hours": [
+            3
+        ]
+    },
+    {
+        "name": "Dieter",
+        "possible hours": [
+            3
+        ]
+    },
+    {
+        "name": "Erika",
+        "possible hours": [
+            9
+        ]
+    },
+    {
+        "name": "Friedrich",
+        "possible hours": [
+            9
+        ]
+    },
+    {
+        "name": "Gustav",
+        "possible hours": [
+            9
+        ]
+    },
+    {
+        "name": "Ida",
+        "possible hours": [
+            9
+        ]
+    },
+    {
+        "name": "Jana",
+        "possible hours": [
+            9
+        ]
+    },
+    {
+        "name": "Karl",
+        "possible hours": [
+            16
+        ]
+    },
+    {
+        "name": "Lara",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Marei",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Nils",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Olaf",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Petra",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Quentin",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Rita",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Stella",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Titus",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Ute",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Volker",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "Wiebke",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "XXXX",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "YYYYY",
+        "possible hours": [
+            37
+        ]
+    },
+    {
+        "name": "ZZZZZZ",
+        "possible hours": [
+            37
+        ]
+    }
+]

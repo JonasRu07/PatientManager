@@ -1,0 +1,217 @@
+{
+  "Monday" :
+          [
+            {
+              "time": "0750",
+              "duration": 50
+            },
+            {
+              "time": "0840",
+              "duration": 50
+            },
+            {
+              "time": "0930",
+              "duration": 50
+            },
+            {
+              "time": "1030",
+              "duration": 50
+            },
+            {
+              "time": "1120",
+              "duration": 50
+            },
+            {
+              "time": "1210",
+              "duration": 50
+            },
+            {
+              "time": "1330",
+              "duration": 50
+            },
+            {
+              "time": "1420",
+              "duration": 50
+            },
+            {
+              "time": "1510",
+              "duration": 50
+            },
+            {
+              "time": "1600",
+              "duration": 50
+            }
+          ],
+  "Tuesday" :
+          [
+            {
+              "time": "0750",
+              "duration": 50
+            },
+            {
+              "time": "0840",
+              "duration": 50
+            },
+            {
+              "time": "0930",
+              "duration": 50
+            },
+            {
+              "time": "1030",
+              "duration": 50
+            },
+            {
+              "time": "1120",
+              "duration": 50
+            },
+            {
+              "time": "1210",
+              "duration": 50
+            },
+            {
+              "time": "1330",
+              "duration": 50
+            },
+            {
+              "time": "1420",
+              "duration": 50
+            },
+            {
+              "time": "1510",
+              "duration": 50
+            },
+            {
+              "time": "1600",
+              "duration": 50
+            }
+          ],
+  "Wednesday":
+          [
+            {
+              "time": "0750",
+              "duration": 50
+            },
+            {
+              "time": "0840",
+              "duration": 50
+            },
+            {
+              "time": "0930",
+              "duration": 50
+            },
+            {
+              "time": "1030",
+              "duration": 50
+            },
+            {
+              "time": "1120",
+              "duration": 50
+            },
+            {
+              "time": "1210",
+              "duration": 50
+            },
+            {
+              "time": "1330",
+              "duration": 50
+            },
+            {
+              "time": "1420",
+              "duration": 50
+            },
+            {
+              "time": "1510",
+              "duration": 50
+            },
+            {
+              "time": "1600",
+              "duration": 50
+            }
+          ],
+  "Thursday" :
+          [
+            {
+              "time": "0750",
+              "duration": 50
+            },
+            {
+              "time": "0840",
+              "duration": 50
+            },
+            {
+              "time": "0930",
+              "duration": 50
+            },
+            {
+              "time": "1030",
+              "duration": 50
+            },
+            {
+              "time": "1120",
+              "duration": 50
+            },
+            {
+              "time": "1210",
+              "duration": 50
+            },
+            {
+              "time": "1330",
+              "duration": 50
+            },
+            {
+              "time": "1420",
+              "duration": 50
+            },
+            {
+              "time": "1510",
+              "duration": 50
+            },
+            {
+              "time": "1600",
+              "duration": 50
+            }
+          ],
+  "Friday" :
+          [
+            {
+              "time": "0750",
+              "duration": 50
+            },
+            {
+              "time": "0840",
+              "duration": 50
+            },
+            {
+              "time": "0930",
+              "duration": 50
+            },
+            {
+              "time": "1030",
+              "duration": 50
+            },
+            {
+              "time": "1120",
+              "duration": 50
+            },
+            {
+              "time": "1210",
+              "duration": 50
+            },
+            {
+              "time": "1330",
+              "duration": 50
+            },
+            {
+              "time": "1420",
+              "duration": 50
+            },
+            {
+              "time": "1510",
+              "duration": 50
+            },
+            {
+              "time": "1600",
+              "duration": 50
+            }
+          ]
+}
