@@ -2,19 +2,19 @@
     {
         "name": "Albert",
         "possible hours": [
-            3
+            0
         ]
     },
     {
         "name": "Bert",
         "possible hours": [
-            3
+            1
         ]
     },
     {
         "name": "Celine",
         "possible hours": [
-            3
+            2
         ]
     },
     {
@@ -26,25 +26,31 @@
     {
         "name": "Erika",
         "possible hours": [
-            9
+            4
         ]
     },
     {
         "name": "Friedrich",
         "possible hours": [
-            9
+            5
         ]
     },
     {
         "name": "Gustav",
         "possible hours": [
-            9
+            6
+        ]
+    },
+    {
+        "name": "Hildegart",
+        "possible hours": [
+            7   
         ]
     },
     {
         "name": "Ida",
         "possible hours": [
-            9
+            8
         ]
     },
     {
@@ -56,97 +62,97 @@
     {
         "name": "Karl",
         "possible hours": [
-            16
+            10
         ]
     },
     {
         "name": "Lara",
         "possible hours": [
-            37
+            11
         ]
     },
     {
         "name": "Marei",
         "possible hours": [
-            37
+            12
         ]
     },
     {
         "name": "Nils",
         "possible hours": [
-            37
+            13
         ]
     },
     {
         "name": "Olaf",
         "possible hours": [
-            37
+            14
         ]
     },
     {
         "name": "Petra",
         "possible hours": [
-            37
+            15
         ]
     },
     {
         "name": "Quentin",
         "possible hours": [
-            37
+            16
         ]
     },
     {
         "name": "Rita",
         "possible hours": [
-            37
+            17
         ]
     },
     {
         "name": "Stella",
         "possible hours": [
-            37
+            18
         ]
     },
     {
         "name": "Titus",
         "possible hours": [
-            37
+            19
         ]
     },
     {
         "name": "Ute",
         "possible hours": [
-            37
+            20
         ]
     },
     {
         "name": "Volker",
         "possible hours": [
-            37
+            21
         ]
     },
     {
         "name": "Wiebke",
         "possible hours": [
-            37
+            22
         ]
     },
     {
         "name": "XXXX",
         "possible hours": [
-            37
+            23
         ]
     },
     {
         "name": "YYYYY",
         "possible hours": [
-            37
+            24
         ]
     },
     {
         "name": "ZZZZZZ",
         "possible hours": [
-            37
+            25
         ]
     }
 ]
