@@ -1,3 +1,4 @@
+from .controller import Controller
 from .hour import Hour
 from .patient import Patient
 from .patient_wrapper import PatientWrapper
