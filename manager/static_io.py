@@ -6,22 +6,22 @@ from typing import TypedDict
 from .hour import Hour
 from .patient import Patient
 
-__dict_day = TypedDict("__dict_day", {"time" : str,
+_dict_day = TypedDict("_dict_day", {"time" : str,
                                       "duration" : int})
-__dict_hours_data = TypedDict("__dict_hours_data", {"Monday" : list[__dict_day],
-                                                    "Tuesday" : list[__dict_day],
-                                                    "Wednesday" : list[__dict_day],
-                                                    "Thursday" : list[__dict_day],
-                                                    "Friday" : list[__dict_day],})
+_dict_hours_data = TypedDict("_dict_hours_data", {"Monday" : list[_dict_day],
+                                                    "Tuesday" : list[_dict_day],
+                                                    "Wednesday" : list[_dict_day],
+                                                    "Thursday" : list[_dict_day],
+                                                    "Friday" : list[_dict_day],})
 
-__dict_patient_data = TypedDict("__dict_patient_data", {"name" : str,
+_dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
                                                         "possible hours" : list[int,]})
 
 
 
 class InputHours:
     @classmethod
-    def load(cls, path=os.path.join(".", "configs", "hours.json")) -> list[Hour,]:
+    def load(cls, path=os.path.join("manager", "config", "hours.json")) -> list[Hour,]:
         hours = []
         data = InputHours.get_data(path)
 
@@ -38,13 +38,13 @@ class InputHours:
         return hours
 
     @classmethod
-    def get_data(cls, path=os.path.join("..", "configs", "hours.json")) -> __dict_hours_data:
+    def get_data(cls, path=os.path.join("manager", "config", "hours.json")) -> _dict_hours_data:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
 class InputPatients:
     @classmethod
-    def load(cls, path:str=os.path.join("..", "configs", "patients.json")):
+    def load(cls, path:str=os.path.join("manager", "config", "patients.json")):
         patients = []
         data = InputPatients.get_data(path)
         for patient in data:
@@ -52,7 +52,7 @@ class InputPatients:
         return patients
 
     @classmethod
-    def get_data(cls, path:str=os.path.join("..", "configs", "patients.json")) -> list[__dict_patient_data]:
+    def get_data(cls, path:str=os.path.join("manager", "config", "patients.json")) -> list[_dict_patient_data]:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
