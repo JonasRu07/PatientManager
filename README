@@ -1,0 +1,81 @@
+This is a program for solving the problem of having multiple Patients, which have weekly repeating appointments.
+
+It is currently entirely command based, but there is currently an UI in development. Check GitHub page for updates.
+
+Tested and developed on:
+    Linux (tested: Ubuntu 21.2)
+    Windows 10
+
+Installation:
+
+Linux:
+    clone https://github.com/JonasRu07/PatientManager.git
+    python3 -m venv .venv
+    source .venv/bin/activate
+    venv; python -m pip install -e .
+
+Windows:
+    clone https://github.com/JonasRu07/PatientManager.git
+    python -m venv .venv
+    .venv\Scripts\activate
+    python -m pip install -e .
+
+Setup:
+    In the path PatientManager/manager/config are 2 files
+    hours.json
+        Enter all of your Hours you offer here.
+        With installation there is are hours added as a baseline for what you need to do, but here is the base structure:
+        {
+            "Monday" : [
+                {"time":"0700",
+                duration:50},
+                {"time":"0700",
+                duration:50},
+                
+            ],
+            "Tuesday " : [],
+            ...
+        }
+        time is a for letter long string with the first two the hour, the last two the minutes
+        duration is how long the hour is
+        The order the days, or the hours on each day is not important, but it makes it easier to fill out the patients
+        and is later in the README assumed to be for each day from earliest to latest
+        
+        patients.json
+        Enter all patient you have here
+        With installation there is are hours added as a baseline for what you need to do, but here is the base structure:
+        [
+         {
+             "name":"Name of patient",
+             "possible hours" : [0, 2, 16, 72]
+         },
+         {
+             "name":"Name of patient",
+             "possible hours" : [0, 2, 16, 72]
+         },
+         ...
+        ]
+        name is simply the name of the patient
+        possible hours is a list [] of all hours the patient can attend to.
+            The hours are defined with integers, later called IDs
+            The ID is calculated by the day (Mo -> 0, Tu -> 16, We -> 32, ...) and the number of what hour is it on that day.
+            And yes, I start counting at 0 ; )
+            Example:
+                You have Thursday 4 Hours, and Peter can come to the second. Than the ID you need to enter is 49
+                (48, because Thursday is 48, + 1, because it is the second hour of the day)
+                
+
+
+
+Run:
+    Linux:
+    python3 manager 
+    Windows:
+    python manager 
+
+    Arguments
+        -d Solves only define solutions therefore if in one hour only on patient can show up
+        -c Tries to find all solutions with all patients having an appointment. WARNING This process can
+           be very slow and it may seem the the program is stuck while it is still running
+
+        They can used together. This can help to speed up the -c command
