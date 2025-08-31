@@ -62,97 +62,97 @@
     {
         "name": "Karl",
         "possible hours": [
-            10
+            16
         ]
     },
     {
         "name": "Lara",
         "possible hours": [
-            11
+            17
         ]
     },
     {
         "name": "Marei",
         "possible hours": [
-            12
+            18
         ]
     },
     {
         "name": "Nils",
         "possible hours": [
-            13
+            19
         ]
     },
     {
         "name": "Olaf",
         "possible hours": [
-            14
+            20
         ]
     },
     {
         "name": "Petra",
         "possible hours": [
-            15
+            21
         ]
     },
     {
         "name": "Quentin",
         "possible hours": [
-            16
+            22
         ]
     },
     {
         "name": "Rita",
         "possible hours": [
-            17
+            23
         ]
     },
     {
         "name": "Stella",
         "possible hours": [
-            18
+            24
         ]
     },
     {
         "name": "Titus",
         "possible hours": [
-            19
+            25
         ]
     },
     {
         "name": "Ute",
         "possible hours": [
-            20
+            32
         ]
     },
     {
         "name": "Volker",
         "possible hours": [
-            21
+            33
         ]
     },
     {
         "name": "Wiebke",
         "possible hours": [
-            22
+            34
         ]
     },
     {
         "name": "XXXX",
         "possible hours": [
-            23
+            35
         ]
     },
     {
         "name": "YYYYY",
         "possible hours": [
-            24
+            36
         ]
     },
     {
         "name": "ZZZZZZ",
         "possible hours": [
-            25
+            37
         ]
     }
 ]
