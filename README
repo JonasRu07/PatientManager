@@ -9,13 +9,13 @@ Tested and developed on:
 Installation:
 
 Linux:
-    clone https://github.com/JonasRu07/PatientManager.git
+    git clone https://github.com/JonasRu07/PatientManager.git
     python3 -m venv .venv
     source .venv/bin/activate
-    venv; python -m pip install -e .
+    python -m pip install -e ./PatientManager
 
 Windows:
-    clone https://github.com/JonasRu07/PatientManager.git
+    git clone https://github.com/JonasRu07/PatientManager.git
     python -m venv .venv
     .venv\scripts\activate
     python -m pip install -e .
