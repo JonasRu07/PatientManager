@@ -10,12 +10,14 @@ Installation:
 
 Linux:
     git clone https://github.com/JonasRu07/PatientManager.git
+    cd ./PatientManager
     python3 -m venv .venv
     source .venv/bin/activate
-    python -m pip install -e ./PatientManager
+    python -m pip install -e .
 
 Windows:
     git clone https://github.com/JonasRu07/PatientManager.git
+    cd PatientManager
     python -m venv .venv
     .venv\scripts\activate
     python -m pip install -e .
