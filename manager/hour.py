@@ -13,4 +13,4 @@ class Hour:
         self.ID = ID
         self.time = time
         self.duration = duration
-        self.taken_by: Patient | None = None
+        self.taken_by:None | Patient = None

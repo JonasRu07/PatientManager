@@ -41,8 +41,7 @@ class Controller:
 
         return self.solve_define_answers() if changes else None
     
-    def solve_recursive(self) -> list[Week]:
-        """Wrapper to call self.__solve_recursive"""
+    def solve_recursive(self) -> list[Week,]:
         return self.__solve_recursive(self.patient_wrapper, self.week)
     
     def __solve_recursive(self, pw:PatientWrapper, week:Week, start=0) -> list[Week,]:
