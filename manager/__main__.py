@@ -5,6 +5,11 @@ import manager
 def main(args):
     print("Start Patient Manager")
     controller = manager.Controller()
+    
+    g = manager.MainGUI(controller)
+    g.load_hours(controller.week.hours)
+    g.root.mainloop()
+    return
     if args.define:
         controller.solve_define_answers()
         print('Define solution\n', controller.week)
