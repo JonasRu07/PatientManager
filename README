@@ -17,7 +17,7 @@ Linux:
 Windows:
     clone https://github.com/JonasRu07/PatientManager.git
     python -m venv .venv
-    .venv\Scripts\activate
+    .venv\scripts\activate
     python -m pip install -e .
 
 Setup:
