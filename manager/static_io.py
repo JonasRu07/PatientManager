@@ -42,6 +42,7 @@ class InputHours:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
+
 class InputPatients:
     @classmethod
     def load(cls, path:str=os.path.join("manager", "config", "patients.json")):
@@ -56,3 +57,12 @@ class InputPatients:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
+    @classmethod
+    def save(cls,
+             patients:list[Patient],
+             path:str=os.path.join("manager", "config", "patients.json")) -> None:
+        
+        json.dump(patients,
+                  open(path, 'w+', encoding='utf-8'),
+                  indent=4)
+        
