@@ -1,6 +1,6 @@
 
 from .gui import MainGUI, AddPatientGUI
-from .hour import Hour
+from .patient import Patient
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -27,8 +27,12 @@ class UIController:
             print(f'Found {len(solutions)} Solutions. Taking the First one')
             self.main_ui.load_hours(solutions[0].hours)
             
-    def handle_call_add_patient(self, name:str, pos_hours:list[int,]):
-        raise NotImplementedError
+    def handle_call_add_patient(self, name:str, pos_hours:list[int,]) -> bool:
+        for char in name:
+            if not (char.isalnum() or char == ' '):
+                return False
+        self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
+        return True
         
     def start(self):    
         self.main_ui.load_hours(self.base_controller.week.hours)
