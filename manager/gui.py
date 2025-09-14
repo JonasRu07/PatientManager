@@ -4,17 +4,17 @@ from .hour import Hour
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from .controller import Controller
+    from .ui_controller import UIController
 
 class MainGUI:
-    def __init__(self, controller:'Controller') -> None:
+    def __init__(self, controller:'UIController') -> None:
         self.controller = controller
         
         self.root = tk.Tk()
         self.root.title('Patient Manager')
         self.root.geometry('1250x580')
         self.root.configure(background='#1f1f1f')
-        self.root.bind_all('<Escape>', lambda event : self.root.destroy())
+        self.root.bind_all('<Escape>', lambda event : self.close())
         
         # Constants
         self.DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -138,17 +138,10 @@ class MainGUI:
         self.b_solve_define.place(x=20, y=90, width=160, height=50)
         
     def call_solve_recursive(self):
-        solutions = self.controller.solve_recursive()
-        if len(solutions) == 0:
-            print('No solutions found')
-            return
-        else:
-            print(f'Found {len(solutions)} Solutions. Taking the First one')
-            self.load_hours(solutions[0].hours)
+        self.controller.handle_solve_recursive()
     
     def call_solve_define(self):
-        self.controller.solve_define_answers()
-        self.load_hours(self.controller.week.hours)
+        self.controller.handle_solve_define()
     
     def load_hours(self, hours:list[Hour, ]) -> None:
         
@@ -167,3 +160,15 @@ class MainGUI:
                                     y=self.__POSITIONS["Time"][hour.time[:2]+ '00'][1]+self.__POSITIONS_CONSTANTS["Time"]["px_per_hour"]*int(hour.time[2:])/60,
                                     width=self.__POSITIONS_CONSTANTS["Day"]["width"],
                                     height=self.__POSITIONS_CONSTANTS["Time"]["px_per_hour"] * hour.duration / 60)
+        
+    def start(self):
+        self.root.mainloop()
+        
+    def close(self):
+        self.root.forget(self.root)
+        # As closing the main window does't terminate the mainloop
+        # we have to manually call the main termination
+        self.controller.terminate()
+        
+    def destroy(self):
+        self.root.destroy()

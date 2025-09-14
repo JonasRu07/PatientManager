@@ -6,9 +6,9 @@ def main(args):
     print("Start Patient Manager")
     controller = manager.Controller()
     
-    g = manager.MainGUI(controller)
-    g.load_hours(controller.week.hours)
-    g.root.mainloop()
+    ui_controller = manager.UIController(controller)
+    ui_controller.start()
+        
     return
     if args.define:
         controller.solve_define_answers()

@@ -1,0 +1,6 @@
+# Python
+/.venv
+
+# Files
+scratch.py
+/Patient_Manager.egg-info
