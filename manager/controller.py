@@ -1,6 +1,7 @@
 import os
 
 from .patient_wrapper import PatientWrapper
+from .patient import Patient
 from .static_io import InputPatients
 from .week import Week
 
@@ -12,10 +13,10 @@ class Controller:
         self.week = Week(os.path.join(self.config_path, "hours.json"))
         print(f"Loaded {len(self.week.hours)} hours from config")
         self.patient_wrapper = PatientWrapper(os.path.join(self.config_path, "patients.json"))
-        self.patient_wrapper = PatientWrapper(os.path.join(self.config_path, "patients.json"))
-        self.patient_data = InputPatients.get_data(os.path.join(self.config_path, "patients.json"))
         print(f"Loaded {len(self.patient_wrapper.patients)} patients from config")
-        print(f"Loaded {len(self.patient_wrapper.patients)} patients from config")
+        
+    def add_patient(self, patient:Patient):
+        self.patient_wrapper.add(patient)
         
     def solve_define_answers(self) -> None:
         """
@@ -73,3 +74,7 @@ class Controller:
                     solutions += self.__solve_recursive(new_pw, new_week, start=hour_index)
 
         return solutions
+    
+    def close(self):
+        print('Closing a controller instance')
+        InputPatients.save(self.patient_wrapper.patients)
