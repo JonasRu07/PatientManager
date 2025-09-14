@@ -16,6 +16,9 @@ class PatientWrapper:
             self.patients = InputPatients.load(path)
         else:
             self.patients = patients
+        
+    def add(self, patient:Patient) -> None:
+        self.patients.append(patient)
 
     def copy(self):
         """
