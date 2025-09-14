@@ -27,7 +27,6 @@ class Controller:
             patient_index = None
             patient_ref = None
             for index, patient in enumerate(self.patient_wrapper.patients):
-            for index, patient in enumerate(self.patient_wrapper.patients):
                 if hour.ID in patient.pos_times:
                     if patient_index is None:
                         patient_index = index
@@ -39,7 +38,6 @@ class Controller:
                 if patient_ref is not None:
                     print(f"Patient {patient_ref.name} has hour {hour.ID}")
                     hour.taken_by = patient_ref
-                    self.patient_wrapper.patients.remove(patient_ref)
                     self.patient_wrapper.patients.remove(patient_ref)
                     changes = True
 
@@ -59,12 +57,10 @@ class Controller:
         :return: list[Week,] Empty if no solution has been found. Each week is completely deep copied, incl. content
         """
         if len(pw.patients) == 0:
-        if len(pw.patients) == 0:
             return [week]
         solutions = []
         for hour_index, hour in enumerate(week.hours):
             if hour_index < start or hour.taken_by is not None: continue
-            for patient_index, patient in enumerate(pw.patients):
             for patient_index, patient in enumerate(pw.patients):
                 if hour.ID in patient.pos_times:
                     new_week = week.copy()
