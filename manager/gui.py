@@ -146,6 +146,17 @@ class MainGUI:
                                        command=self.call_add_patient)
         self.b_add_patient.place(x=20, y=140, width=160, height=35)
         
+        # Button Patient manager
+        self.b_patient_managing = tk.Button(master=self.f_interaction,
+                                            background='#11515C',
+                                            foreground='#F0F0F0',
+                                            text='Manage patients',
+                                            command=self.call_patient_managing)
+        self.b_patient_managing.place(x=20, y=185, width=160, height=35)
+        
+    def call_patient_managing(self) -> None:
+        self.controller.handle_patient_manager_ui()
+        
     def call_add_patient(self) -> None:
         self.controller.handle_ui_add_patient()
         
@@ -229,14 +240,14 @@ class AddPatientGUI:
 
         self.bs_hours: list[tk.Button,] = []
 
-        self.child = tk.Tk()
-        self.child.title('Add Patient')
-        self.child.geometry('1320x500')
-        self.child.configure(background='#1e1f22')
-        self.child.bind('<Escape>', lambda event: self.destroy())
+        self.root = tk.Tk()
+        self.root.title('Add Patient')
+        self.root.geometry('1320x500')
+        self.root.configure(background='#1e1f22')
+        self.root.bind('<Escape>', lambda event: self.destroy())
 
         # Frame Time plan
-        self.f_time_plan = tk.Frame(master=self.child,
+        self.f_time_plan = tk.Frame(master=self.root,
                                     background='#2b2d30',
                                     border=2,
                                     relief='solid')
@@ -433,7 +444,7 @@ class AddPatientGUI:
 
 
         # Input name
-        self.frame_config = tk.Frame(master=self.child,
+        self.frame_config = tk.Frame(master=self.root,
                                      background='#2b2d30')
         self.frame_config.place(x=1100, y=20, width=200, height=200)
 
@@ -507,7 +518,75 @@ class AddPatientGUI:
             print('Invalid input')
 
     def start(self) -> None:
-        self.child.mainloop()
+        self.root.mainloop()
         
     def destroy(self) -> None:
-        self.child.destroy()
+        self.root.destroy()
+        
+class PatientManagingGUI:
+    def __init__(self, controller:'UIController') -> None:
+        self.controller = controller
+
+        self.root = tk.Tk()
+        self.root.title('Patients')
+        self.root.geometry('300x600')
+        self.root.configure(background='#1e1f22')
+        self.root.configure(background='#FFFFFF')
+        self.root.bind('<Escape>', lambda event : self.destroy())
+        self.root.bind_all('<Button-4>', lambda event: self.scroll_ui(up=False))
+        self.root.bind_all('<Button-5>', lambda event : self.scroll_ui(up=True))
+
+        self.ls_patients:list[tk.Label] = []
+
+        self.window_height = 600
+
+        self.f_patients_position = [0, 0, 300, 600]
+        self.f_patients_max_y = 600
+
+        self.f_patients = tk.Frame(master=self.root,
+                                    background='#2b2d30',
+                                    border=2,
+                                    relief='solid')
+        self.f_patients.place(x=self.f_patients_position[0],
+                              y=self.f_patients_position[1],
+                              width=self.f_patients_position[2],
+                              height=self.f_patients_position[3])
+
+    def scroll_ui(self, up:bool) -> None:
+        delta = 10
+        if up:
+            if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
+                self.f_patients_position[1] -= delta
+            else:
+                self.f_patients_position[1] = self.f_patients_max_y - self.f_patients_position[3]
+        else:
+            if self.f_patients_position[1] > -delta:
+                self.f_patients_position[1] = 0
+            else:
+                self.f_patients_position[1] += delta
+
+
+        self.f_patients.place(x=self.f_patients_position[0],
+                              y=self.f_patients_position[1],
+                              width=self.f_patients_position[2],
+                              height=self.f_patients_position[3])
+
+
+    def load_patients(self, patients) -> None:
+        print('Loading patients to show')
+        count_patients = len(patients)
+        self.f_patients_position[3] = max(count_patients*25 + 10, 600)
+
+
+        for index, patient in enumerate(patients):
+            self.ls_patients.append(tk.Label(master=self.f_patients,
+                                             background='#ACAB00',
+                                             foreground='#000000',
+                                             text=patient.name))
+            self.ls_patients[-1].place(x=0, y=25*index+5, width=260, height=20)
+
+    def start(self) -> None:
+        self.root.mainloop()
+        
+    def destroy(self) -> None:
+        self.root.destroy()

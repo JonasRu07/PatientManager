@@ -1,5 +1,5 @@
 
-from .gui import MainGUI, AddPatientGUI
+from .gui import MainGUI, AddPatientGUI, PatientManagingGUI
 from .patient import Patient
 
 from typing import TYPE_CHECKING
@@ -45,6 +45,11 @@ class UIController:
                                        self.base_controller.week.copy())
         add_patient_ui.start()
         del add_patient_ui
+        
+    def handle_patient_manager_ui(self) -> None:
+        ui = PatientManagingGUI(self)
+        ui.load_patients(self.base_controller.patient_wrapper.copy().patients)
+        ui.start()
         
     def terminate(self) -> None:
         print('Terminating the process')

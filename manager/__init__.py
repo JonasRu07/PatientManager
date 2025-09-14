@@ -1,5 +1,5 @@
 from .controller import Controller
-from .gui import MainGUI, AddPatientGUI
+from .gui import MainGUI, AddPatientGUI, PatientManagingGUI
 from .hour import Hour
 from .patient import Patient
 from .patient_wrapper import PatientWrapper
