@@ -192,10 +192,10 @@ class AddPatientGUI:
     def __init__(self, controller:'UIController', parent:tk.Tk, week_buffer:Week):
 
         self.controller = controller
-        self.week_buffer=week_buffer
+        self.week_buffer = week_buffer
 
         self.patient_name = ''
-        self.pos_hours = []
+        self.pos_hours:list[int] = []
 
         # Time
         self.DAY_WIDTH = 170
@@ -501,7 +501,10 @@ class AddPatientGUI:
                                            activebackground='green')
 
     def call_confirm(self):
-        self.controller.handle_call_add_patient(self.e_patient_name.get(), self.pos_hours)
+        if self.controller.handle_call_add_patient(self.e_patient_name.get(), self.pos_hours):
+            self.destroy()
+        else:
+            print('Invalid input')
 
     def start(self):
         self.child.mainloop()
