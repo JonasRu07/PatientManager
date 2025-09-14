@@ -18,3 +18,6 @@ class Hour:
         self.time = time
         self.duration = duration
         self.taken_by: Patient | None = None
+        
+    def __str__(self) -> str:
+        return f"Hour: ID:{self.ID}; time:{self.time}, duration:{self.duration}; taken by:{self.taken_by}"

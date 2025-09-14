@@ -8,3 +8,6 @@ class Patient:
         """
         self.name = name
         self.pos_times = pos_times
+        
+    def __str__(self) -> str:
+        return  f'Patient: {self.name}; {self.pos_times}'
