@@ -2,7 +2,7 @@ import argparse
 
 import manager
 
-def main(args):
+def main(args) -> None:
     print("Start Patient Manager")
     controller = manager.Controller()
     
@@ -11,7 +11,7 @@ def main(args):
     
     controller.close()
         
-    return
+    return 
     if args.define:
         controller.solve_define_answers()
         print('Define solution\n', controller.week)

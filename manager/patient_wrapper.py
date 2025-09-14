@@ -20,7 +20,7 @@ class PatientWrapper:
     def add(self, patient:Patient) -> None:
         self.patients.append(patient)
 
-    def copy(self):
+    def copy(self) -> 'PatientWrapper':
         """
         Copies all patients directly. Preventing any shenanigans with changing one patient
         """

@@ -146,13 +146,13 @@ class MainGUI:
                                        command=self.call_add_patient)
         self.b_add_patient.place(x=20, y=140, width=160, height=35)
         
-    def call_add_patient(self):
+    def call_add_patient(self) -> None:
         self.controller.handle_ui_add_patient()
         
-    def call_solve_recursive(self):
+    def call_solve_recursive(self) -> None:
         self.controller.handle_solve_recursive()
     
-    def call_solve_define(self):
+    def call_solve_define(self) -> None:
         self.controller.handle_solve_define()
     
     def load_hours(self, hours:list[Hour, ]) -> None:
@@ -173,23 +173,23 @@ class MainGUI:
                                     width=self.__POSITIONS_CONSTANTS["Day"]["width"],
                                     height=self.__POSITIONS_CONSTANTS["Time"]["px_per_hour"] * hour.duration / 60)
         
-    def start(self):        
+    def start(self) -> None:        
         self.root.mainloop()
         
-    def close(self):
+    def close(self) -> None:
         self.root.forget(self.root)
         # As closing the main window does't terminate the mainloop
         # we have to manually call the main termination
         self.controller.terminate()
         
-    def destroy(self):
+    def destroy(self) -> None:
         self.root.destroy()
         
     
     
 class AddPatientGUI:
 
-    def __init__(self, controller:'UIController', parent:tk.Tk, week_buffer:Week):
+    def __init__(self, controller:'UIController', parent:tk.Tk, week_buffer:Week) -> None:
 
         self.controller = controller
         self.week_buffer = week_buffer
@@ -489,7 +489,7 @@ class AddPatientGUI:
                                     )
             
 
-    def add_hour_to_pos_hours(self, index:int):
+    def add_hour_to_pos_hours(self, index:int) -> None:
         print(self.week_buffer.hours[index].ID)
         if self.week_buffer.hours[index].ID in self.pos_hours:
             self.pos_hours.remove(self.week_buffer.hours[index].ID)
@@ -500,14 +500,14 @@ class AddPatientGUI:
             self.bs_hours[index].configure(background='green',
                                            activebackground='green')
 
-    def call_confirm(self):
+    def call_confirm(self) -> None:
         if self.controller.handle_call_add_patient(self.e_patient_name.get(), self.pos_hours):
             self.destroy()
         else:
             print('Invalid input')
 
-    def start(self):
+    def start(self) -> None:
         self.child.mainloop()
         
-    def destroy(self):
+    def destroy(self) -> None:
         self.child.destroy()

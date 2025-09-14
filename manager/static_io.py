@@ -45,7 +45,7 @@ class InputHours:
 
 class InputPatients:
     @classmethod
-    def load(cls, path:str=os.path.join("manager", "config", "patients.json")):
+    def load(cls, path:str=os.path.join("manager", "config", "patients.json")) -> list[Patient,]:
         patients = []
         data = InputPatients.get_data(path)
         for patient in data:

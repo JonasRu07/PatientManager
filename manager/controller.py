@@ -15,7 +15,7 @@ class Controller:
         self.patient_wrapper = PatientWrapper(os.path.join(self.config_path, "patients.json"))
         print(f"Loaded {len(self.patient_wrapper.patients)} patients from config")
         
-    def add_patient(self, patient:Patient):
+    def add_patient(self, patient:Patient) -> None:
         self.patient_wrapper.add(patient)
         
     def solve_define_answers(self) -> None:
@@ -75,6 +75,6 @@ class Controller:
 
         return solutions
     
-    def close(self):
+    def close(self) -> None:
         print('Closing a controller instance')
         InputPatients.save(self.patient_wrapper.patients)

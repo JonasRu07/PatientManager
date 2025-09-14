@@ -1,5 +1,5 @@
 class Patient:
-    def __init__(self, name:str, pos_times:list[int, ]):
+    def __init__(self, name:str, pos_times:list[int, ]) -> None:
         """
         Representation of a patient.
         name: str: Name of the patient. Should only be used with "UTF-8" encoding

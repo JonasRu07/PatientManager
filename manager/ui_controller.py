@@ -14,11 +14,11 @@ class UIController:
         
         self.main_ui = MainGUI(self)
         
-    def handle_solve_define(self):
+    def handle_solve_define(self) -> None:
         self.base_controller.solve_define_answers()
         self.main_ui.load_hours(self.base_controller.week.hours)
         
-    def handle_solve_recursive(self):
+    def handle_solve_recursive(self) -> None:
         solutions = self.base_controller.solve_recursive()
         if len(solutions) == 0:
             print('No solutions found')
@@ -34,18 +34,18 @@ class UIController:
         self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
         return True
         
-    def start(self):    
+    def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
         
         self.main_ui.start()
         
-    def handle_ui_add_patient(self):
+    def handle_ui_add_patient(self) -> None:
         add_patient_ui = AddPatientGUI(self,
                                        self.main_ui.root,
                                        self.base_controller.week.copy())
         add_patient_ui.start()
         del add_patient_ui
         
-    def terminate(self):
+    def terminate(self) -> None:
         print('Terminating the process')
         self.main_ui.destroy()
