@@ -9,13 +9,13 @@ from .patient import Patient
 _dict_day = TypedDict("_dict_day", {"time" : str,
                                       "duration" : int})
 _dict_hours_data = TypedDict("_dict_hours_data", {"Monday" : list[_dict_day],
-                                                    "Tuesday" : list[_dict_day],
-                                                    "Wednesday" : list[_dict_day],
-                                                    "Thursday" : list[_dict_day],
-                                                    "Friday" : list[_dict_day],})
+                                                  "Tuesday" : list[_dict_day],
+                                                  "Wednesday" : list[_dict_day],
+                                                  "Thursday" : list[_dict_day],
+                                                  "Friday" : list[_dict_day],})
 
 _dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
-                                                        "possible hours" : list[int,]})
+                                                      "possible hours" : list[int,]})
 
 
 
@@ -62,7 +62,13 @@ class InputPatients:
              patients:list[Patient],
              path:str=os.path.join("manager", "config", "patients.json")) -> None:
         
-        json.dump(patients,
+        data:list[_dict_patient_data] = []
+        
+        for patient in patients:
+            data.append({"name" : patient.name,
+                         "possible hours" : patient.pos_times})
+        
+        json.dump(data,
                   open(path, 'w+', encoding='utf-8'),
                   indent=4)
         
