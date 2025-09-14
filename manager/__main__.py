@@ -8,6 +8,8 @@ def main(args):
     
     ui_controller = manager.UIController(controller)
     ui_controller.start()
+    
+    controller.close()
         
     return
     if args.define:
