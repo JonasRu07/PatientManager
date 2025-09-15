@@ -1,5 +1,5 @@
 
-from .gui import MainGUI, AddPatientGUI, PatientManagingGUI
+from .gui import MainGUI, AddPatientGUI, PatientManagerUI
 from .patient import Patient
 
 from typing import TYPE_CHECKING
@@ -34,7 +34,8 @@ class UIController:
         self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
         return True
         
-    def handle_call_delete_patient(self, ui:PatientManagingGUI, patient:Patient) -> None:
+    # def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
+    def handle_call_delete_patient(self, ui, patient:Patient) -> None:
         self.base_controller.delete_patient(patient)
         ui.load_patients(self.base_controller.patient_manager.patients)
     
@@ -51,7 +52,7 @@ class UIController:
         del add_patient_ui
         
     def handle_patient_manager_ui(self) -> None:
-        ui = PatientManagingGUI(self)
+        ui = PatientManagerUI(self, self.main_ui.root)
         ui.load_patients(self.base_controller.patient_manager.patients)
         ui.start()
         

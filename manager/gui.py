@@ -15,7 +15,7 @@ class MainGUI:
         self.root.title('Patient Manager')
         self.root.geometry('1250x580')
         self.root.configure(background='#1f1f1f')
-        self.root.bind_all('<Escape>', lambda event : self.close())
+        self.root.bind('<Escape>', lambda event : self.close())
         
         # Constants
         self.DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
@@ -196,14 +196,18 @@ class MainGUI:
     def destroy(self) -> None:
         self.root.destroy()
         
-    
-    
 class AddPatientGUI:
 
     def __init__(self, controller:'UIController', parent:tk.Tk, week_buffer:Week) -> None:
 
         self.controller = controller
         self.week_buffer = week_buffer
+        
+        self.root = tk.Toplevel(parent)
+        self.root.title('Add Patient')
+        self.root.geometry('1320x500')
+        self.root.configure(background='#1e1f22')
+        self.root.bind('<Escape>', lambda event: self.destroy())
 
         self.patient_name = ''
         self.pos_hours:list[int] = []
@@ -604,6 +608,122 @@ class PatientManagingGUI:
             
     def call_patient_deletion(self, index:int) -> None:
         self.controller.handle_call_delete_patient(self, self.patients[index])
+
+    def start(self) -> None:
+        self.root.mainloop()
+        
+    def destroy(self) -> None:
+        self.root.destroy()
+
+class PatientManagerUI:
+    """
+    This UI contains the handling operation regarding everything, the
+    patient and it's data.
+    It may also create its own children to fulfill its needs. These 
+    should be controlled and killed by this class
+    """
+    def __init__(self,controller:'UIController', parent:tk.Tk) -> None:
+        
+        self.controller = controller
+        
+        self.patients = []
+
+        self.root = tk.Toplevel(parent)
+        self.root.title('Patients')
+        self.root.geometry('600x300')
+        self.root.configure(background='#1e1f22')
+        self.root.configure(background='#FFFFFF')
+        self.root.bind('<Escape>', lambda event : self.destroy())
+        self.root.bind_all('<Button-4>', lambda event: self.scroll_ui(up=False))
+        self.root.bind_all('<Button-5>', lambda event : self.scroll_ui(up=True))
+
+        self.bs_patients:list[tk.Button] = []
+        self.bs_deletion:list[tk.Button] = []
+
+        self.window_height = 300
+        
+        # List of all patients
+        self.f_patients_position = [0, 0, 300, 300]
+        self.f_patients_max_y = 300
+
+        self.f_patients = tk.Frame(master=self.root,
+                                    background='#2b2d30',
+                                    border=2,
+                                    relief='solid')
+        self.f_patients.place(x=self.f_patients_position[0],
+                              y=self.f_patients_position[1],
+                              width=self.f_patients_position[2],
+                              height=self.f_patients_position[3])
+
+        # Show options
+        self.f_options = tk.Frame(master=self.root,
+                                    background='#2b2d30',
+                                    border=2,
+                                    relief='solid')
+        self.f_options.place(x=340, y=20, width=140, height=560)
+        
+        self.b_new_patient = tk.Button(self.f_options,
+                                       background='#11515C',
+                                       foreground='#F0F0F0',
+                                       text='New Patient',
+                                       command=self.call_new_patient)
+        self.b_new_patient.place(x=20, y=20, width=100, height=35)
+
+    def call_new_patient(self):
+        raise NotImplementedError
+
+    def scroll_ui(self, up:bool) -> None:
+        delta = 10
+        if up:
+            if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.f_patients_max_y:
+                self.f_patients_position[1] -= delta
+            else:
+                self.f_patients_position[1] = self.f_patients_max_y - self.f_patients_position[3]
+        else:
+            if self.f_patients_position[1] > -delta:
+                self.f_patients_position[1] = 0
+            else:
+                self.f_patients_position[1] += delta
+
+        self.f_patients.place(x=self.f_patients_position[0],
+                              y=self.f_patients_position[1],
+                              width=self.f_patients_position[2],
+                              height=self.f_patients_position[3])
+
+
+    def load_patients(self, patients) -> None:
+        print('Loading patients to show')
+        self.patients = patients
+        # Delete old labels
+        for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
+            b_patient.destroy()
+            b_delete.destroy()
+        self.bs_patients = []
+        self.bs_deletion = []
+        
+        count_patients = len(patients)
+        self.f_patients_position[3] = max(count_patients*25 + 10, 600)
+
+        for index, patient in enumerate(patients):
+            self.bs_patients.append(tk.Button(master=self.f_patients,
+                                             background='#ACAB00',
+                                             foreground='#000000',
+                                             text=patient.name,
+                                             command=lambda i=index : self.call_edit_patient(i)))
+            self.bs_patients[-1].place(x=0, y=25*index+5, width=260, height=20)
+            
+            self.bs_deletion.append(tk.Button(master=self.f_patients,
+                                              background="#C00812",
+                                              foreground='#081505',
+                                              text="X",
+                                              command=lambda i=index : self.call_patient_deletion(i)))
+            self.bs_deletion[-1].place(x=270, y=25*index+5, width=20, height=20)
+            
+    def call_patient_deletion(self, index:int) -> None:
+        raise NotImplementedError
+    
+    def call_edit_patient(self, index:int) -> None:
+        raise NotImplementedError
 
     def start(self) -> None:
         self.root.mainloop()
