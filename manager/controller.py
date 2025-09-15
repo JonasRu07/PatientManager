@@ -1,6 +1,7 @@
 import os
 
 from .patient_wrapper import PatientWrapper
+from .patient_manager import PatientManager
 from .patient import Patient
 from .static_io import InputPatients
 from .week import Week
@@ -12,13 +13,16 @@ class Controller:
 
         self.week = Week(os.path.join(self.config_path, "hours.json"))
         print(f"Loaded {len(self.week.hours)} hours from config")
-        self.patient_wrapper = PatientWrapper(os.path.join(self.config_path, "patients.json"))
-        print(f"Loaded {len(self.patient_wrapper.patients)} patients from config")
+        self.patient_manager = PatientManager()
+        print(f"Loaded {len(self.patient_manager.patients)} patients from config")
         
     def add_patient(self, patient:Patient) -> None:
-        self.patient_wrapper.add(patient)
+        self.patient_manager.add_patient(patient)
         
     def solve_define_answers(self) -> None:
+        self.__solve_define_answers(self.patient_manager.patients)
+        
+    def __solve_define_answers(self, remaining_patients:list[Patient]) -> None:
         """
         It checks every hour if an hour is only occupied by one person
         :return: None
@@ -27,7 +31,7 @@ class Controller:
         for hour in self.week.hours:
             patient_index = None
             patient_ref = None
-            for index, patient in enumerate(self.patient_wrapper.patients):
+            for index, patient in enumerate(remaining_patients):
                 if hour.ID in patient.pos_times:
                     if patient_index is None:
                         patient_index = index
@@ -39,14 +43,14 @@ class Controller:
                 if patient_ref is not None:
                     print(f"Patient {patient_ref.name} has hour {hour.ID}")
                     hour.taken_by = patient_ref
-                    self.patient_wrapper.patients.remove(patient_ref)
+                    remaining_patients.remove(patient_ref)
                     changes = True
 
         return self.solve_define_answers() if changes else None
     
     def solve_recursive(self) -> list[Week]:
         """Wrapper to call self.__solve_recursive"""
-        return self.__solve_recursive(self.patient_wrapper, self.week)
+        return self.__solve_recursive(self.patient_manager.get_patients_inside_wrapper(), self.week)
     
     def __solve_recursive(self, pw:PatientWrapper, week:Week, start=0) -> list[Week,]:
         """
@@ -77,4 +81,4 @@ class Controller:
     
     def close(self) -> None:
         print('Closing a controller instance')
-        InputPatients.save(self.patient_wrapper.patients)
+        InputPatients.save(self.patient_manager.patients)
