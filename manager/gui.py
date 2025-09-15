@@ -526,6 +526,8 @@ class AddPatientGUI:
 class PatientManagingGUI:
     def __init__(self, controller:'UIController') -> None:
         self.controller = controller
+        
+        self.patients = []
 
         self.root = tk.Tk()
         self.root.title('Patients')
@@ -537,6 +539,7 @@ class PatientManagingGUI:
         self.root.bind_all('<Button-5>', lambda event : self.scroll_ui(up=True))
 
         self.ls_patients:list[tk.Label] = []
+        self.bs_deletion:list[tk.Button] = []
 
         self.window_height = 600
 
@@ -574,6 +577,13 @@ class PatientManagingGUI:
 
     def load_patients(self, patients) -> None:
         print('Loading patients to show')
+        self.patients = patients
+        # Delete old labels
+        for l_patient, b_delete in zip(self.ls_patients, self.bs_deletion):
+            l_patient.destroy()
+            b_delete.destroy()
+        self.ls_patients = []
+        self.bs_deletion = []
         count_patients = len(patients)
         self.f_patients_position[3] = max(count_patients*25 + 10, 600)
 
@@ -584,6 +594,16 @@ class PatientManagingGUI:
                                              foreground='#000000',
                                              text=patient.name))
             self.ls_patients[-1].place(x=0, y=25*index+5, width=260, height=20)
+            
+            self.bs_deletion.append(tk.Button(master=self.f_patients,
+                                              background="#C00812",
+                                              foreground='#081505',
+                                              text="X",
+                                              command=lambda i=index : self.call_patient_deletion(i)))
+            self.bs_deletion[-1].place(x=270, y=25*index+5, width=20, height=20)
+            
+    def call_patient_deletion(self, index:int) -> None:
+        self.controller.handle_call_delete_patient(self, self.patients[index])
 
     def start(self) -> None:
         self.root.mainloop()

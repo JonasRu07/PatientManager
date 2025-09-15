@@ -19,6 +19,9 @@ class Controller:
     def add_patient(self, patient:Patient) -> None:
         self.patient_manager.add_patient(patient)
         
+    def delete_patient(self, patient:Patient) -> bool:
+        return self.patient_manager.delete_patient(patient)
+        
     def solve_define_answers(self) -> None:
         self.__solve_define_answers(self.patient_manager.patients)
         

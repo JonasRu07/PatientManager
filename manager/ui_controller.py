@@ -34,6 +34,10 @@ class UIController:
         self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
         return True
         
+    def handle_call_delete_patient(self, ui:PatientManagingGUI, patient:Patient) -> None:
+        self.base_controller.delete_patient(patient)
+        ui.load_patients(self.base_controller.patient_manager.patients)
+    
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
         
