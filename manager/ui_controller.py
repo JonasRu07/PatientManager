@@ -48,7 +48,7 @@ class UIController:
         
     def handle_patient_manager_ui(self) -> None:
         ui = PatientManagingGUI(self)
-        ui.load_patients(self.base_controller.patient_wrapper.copy().patients)
+        ui.load_patients(self.base_controller.patient_manager.patients)
         ui.start()
         
     def terminate(self) -> None:
