@@ -33,6 +33,9 @@ class UIController:
                 return False
         self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
         return True
+    
+    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
+        raise NotImplementedError
         
     # def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
     def handle_call_delete_patient(self, ui, patient:Patient) -> None:
