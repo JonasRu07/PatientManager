@@ -1,12 +1,17 @@
 
 This is a program for solving the problem of having multiple Patients, which have weekly repeating appointments.
+Each patients has a number of possible hours s/he can attend to. There are currently 2 algorithms to find solution.
+The first one, only finds hours only one patient can attend to.
+The second one solves for every possible solution and choses one. A solution is considered an arrangement of ALL patients. Due to the fact, that this algorithm is very! slow, I can only recommend it for a small number of patients.
 
-This is the GUI-Branch. The base control over the algorithms are implemented in the UI, but changing the data (hours and/or patients) may still require manual changes in the config files. 
-If done a restart of the UI is needed to reload the data. 
+If you encounter any issues with this program, you can leave a detailed description inside the issue page ([this link](https://github.com/JonasRu07/PatientManager/issues)).
 
-Tested and developed on:
-    Linux (tested: Ubuntu 21.2)
-    Windows 10
+Same can be done if there are any features, that you'd like to have
+
+
+It was develop on:
+* Linux (tested: Ubuntu 21.2)
+* Windows 10 (limited)
 
 __Installation:__
 
