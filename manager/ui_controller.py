@@ -1,5 +1,4 @@
-
-from .gui import MainGUI, AddPatientGUI, PatientManagerUI
+from .gui import MainGUI, PatientManagerUI
 from .patient import Patient
 
 from typing import TYPE_CHECKING
@@ -37,27 +36,19 @@ class UIController:
     def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
         raise NotImplementedError
         
-    # def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
-    def handle_call_delete_patient(self, ui, patient:Patient) -> None:
+    def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
         self.base_controller.delete_patient(patient)
         ui.load_patients(self.base_controller.patient_manager.patients)
     
-    def start(self) -> None:    
-        self.main_ui.load_hours(self.base_controller.week.hours)
-        
-        self.main_ui.start()
-        
-    def handle_ui_add_patient(self) -> None:
-        add_patient_ui = AddPatientGUI(self,
-                                       self.main_ui.root,
-                                       self.base_controller.week.copy())
-        add_patient_ui.start()
-        del add_patient_ui
-        
+               
     def handle_patient_manager_ui(self) -> None:
         ui = PatientManagerUI(self, self.main_ui.root)
         ui.load_patients(self.base_controller.patient_manager.patients)
         ui.start()
+        
+    def start(self) -> None:    
+        self.main_ui.load_hours(self.base_controller.week.hours)
+        self.main_ui.start()
         
     def terminate(self) -> None:
         print('Terminating the process')
