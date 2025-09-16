@@ -23,7 +23,7 @@ class Controller:
         return self.patient_manager.delete_patient(patient)
         
     def solve_define_answers(self) -> None:
-        self.__solve_define_answers(self.patient_manager.patients)
+        self.__solve_define_answers(self.patient_manager.get_patients_inside_wrapper().copy().patients)
         
     def __solve_define_answers(self, remaining_patients:list[Patient]) -> None:
         """
@@ -49,7 +49,7 @@ class Controller:
                     remaining_patients.remove(patient_ref)
                     changes = True
 
-        return self.solve_define_answers() if changes else None
+        return self.__solve_define_answers(remaining_patients) if changes else None
     
     def solve_recursive(self) -> list[Week]:
         """Wrapper to call self.__solve_recursive"""
