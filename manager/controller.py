@@ -3,6 +3,7 @@ import os
 from .patient_wrapper import PatientWrapper
 from .patient_manager import PatientManager
 from .patient import Patient
+from .solver import Solver
 from .static_io import InputPatients
 from .week import Week
 
@@ -16,6 +17,8 @@ class Controller:
         self.patient_manager = PatientManager()
         print(f"Loaded {len(self.patient_manager.patients)} patients from config")
         
+        self.find_solution = Solver(self.patient_manager, self.week)
+        
     def add_patient(self, patient:Patient) -> None:
         self.patient_manager.add_patient(patient)
         
@@ -23,33 +26,7 @@ class Controller:
         return self.patient_manager.delete_patient(patient)
         
     def solve_define_answers(self) -> None:
-        self.__solve_define_answers(self.patient_manager.get_patients_inside_wrapper().copy().patients)
-        
-    def __solve_define_answers(self, remaining_patients:list[Patient]) -> None:
-        """
-        It checks every hour if an hour is only occupied by one person
-        :return: None
-        """
-        changes = False
-        for hour in self.week.hours:
-            patient_index = None
-            patient_ref = None
-            for index, patient in enumerate(remaining_patients):
-                if hour.ID in patient.pos_times:
-                    if patient_index is None:
-                        patient_index = index
-                        patient_ref = patient
-                    else:
-                        print(f"Hour {hour.ID} is taken 2 or more times")
-                        break
-            else:
-                if patient_ref is not None:
-                    print(f"Patient {patient_ref.name} has hour {hour.ID}")
-                    hour.taken_by = patient_ref
-                    remaining_patients.remove(patient_ref)
-                    changes = True
-
-        return self.__solve_define_answers(remaining_patients) if changes else None
+        self.week = self.find_solution.define_answers()
     
     def solve_recursive(self) -> list[Week]:
         """Wrapper to call self.__solve_recursive"""
