@@ -18,7 +18,7 @@ class UIController:
         self.main_ui.load_hours(self.base_controller.week.hours)
         
     def handle_solve_recursive(self) -> None:
-        solutions = self.base_controller.solve_recursive()
+        solutions = self.base_controller.solve_recursive_all()
         if len(solutions) == 0:
             print('No solutions found')
             return
