@@ -1,6 +1,9 @@
 # Python
+/manager/__pycache__
 /.venv
 
 # Files
+.gitignore
 scratch.py
+delete_at_some_point.py
 /Patient_Manager.egg-info
