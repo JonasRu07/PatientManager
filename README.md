@@ -1,7 +1,8 @@
 
 This is a program for solving the problem of having multiple Patients, which have weekly repeating appointments.
 
-It is currently entirely command based, but there is currently an UI in development. Check GitHub page for updates.
+This is the GUI-Branch. The base control over the algorithms are implemented in the UI, but changing the data (hours and/or patients) may still require manual changes in the config files. 
+If done a restart of the UI is needed to reload the data. 
 
 Tested and developed on:
     Linux (tested: Ubuntu 21.2)
@@ -103,10 +104,4 @@ __Run:__
     python manager 
     ```
 
-__Arguments:__
-
-* __-d__ Solves only define solutions therefore if in one hour only on patient can show up
-
-* __-c__ Tries to find all solutions with all patients having an appointment. WARNING This process can be very slow and it may seem the the program is stuck while it is still running
-They can used together. This can help to speed up the -c command
 

@@ -11,13 +11,16 @@ class PatientWrapper:
     path: str: (optional) Path to the config file to load the hors from
     patients: list[Patient,]: (optional) Patients to keep track of
     """
-    def __init__(self, path:str=os.path.join("manager", "configs", "patients.json"), patients:list[Patient,]=[]):
-        if patients == []:
+    def __init__(self, path:str=os.path.join("manager", "configs", "patients.json"), patients:list[Patient,]|None=None):
+        if patients is None:
             self.patients = InputPatients.load(path)
         else:
             self.patients = patients
+        
+    def add(self, patient:Patient) -> None:
+        self.patients.append(patient)
 
-    def copy(self):
+    def copy(self) -> 'PatientWrapper':
         """
         Copies all patients directly. Preventing any shenanigans with changing one patient
         """

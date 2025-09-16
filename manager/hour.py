@@ -1,9 +1,13 @@
 from .patient import Patient
 
+from .patient import Patient
+
 
 class Hour:
     def __init__(self, ID:int, time:str, duration:int):
         """
+        Implementation of the time unit, which can be taken by a Patient.
+        ID: int: Unique identification of the hour. Is made up of an 8-Bit integer.
         Implementation of the time unit, which can be taken by a Patient.
         ID: int: Unique identification of the hour. Is made up of an 8-Bit integer.
                  The first 4 bits define the day, the latter 4 the unique ID of the hour on this day
@@ -13,4 +17,7 @@ class Hour:
         self.ID = ID
         self.time = time
         self.duration = duration
-        self.taken_by:None | Patient = None
+        self.taken_by: Patient | None = None
+        
+    def __str__(self) -> str:
+        return f"Hour: ID:{self.ID}; time:{self.time}, duration:{self.duration}; taken by:{self.taken_by}"
