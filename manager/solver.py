@@ -119,13 +119,14 @@ class Solver:
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
                                      self.week.copy())
         # Pulling n umber out of my ass
-        gens_per_patient = 10
+        gens_per_patient = 5000
         print(f"Total Generations to calculate: {gens_per_patient*len(self.patient_manager.patients)}")
         
         current_path = []
         current_path_evaluation = 0
         best_path = []
         best_path_evaluation = 0
+        
         # Generating a good baseline
         for i in range(gens_per_patient):
             current_path = solution_path.gen_path()
@@ -133,13 +134,16 @@ class Solver:
             if current_path_evaluation > best_path_evaluation:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
+
         # Evolving around the best path
         for i in range(1, len(self.patient_manager.patients)):
-            current_path = solution_path.gen_path_option(start=i)
+            current_path = solution_path.gen_path_option(best_path, start=i)
             current_path_evaluation = solution_path.evaluate_path(current_path)
             if current_path_evaluation > best_path_evaluation:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
+                print(f"New best evaluation = {best_path_evaluation}")
+        print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients")
         return solution_path.get_week(best_path, self.week.copy())
 
     
@@ -174,15 +178,21 @@ class SolutionPath:
                 # have been taken
                 continue
             h_index = patient.pos_times.index(pos_hour)
-            path.append([p_index, h_index])
+            path.append([p_index, h_index, patient.name])
         return path
                 
-    def gen_path_option(self, start:int):
-        path = []
-        taken_hours = []
+    def gen_path_option(self, path:list[list[int,]], start:int):
+        path = path[:start]
         
-        patients = self.patient_wrapper.copy().patients[start:]
-        ref_patients = self.patient_wrapper.copy().patients[start:]
+        taken_hours = []
+        patients = self.patient_wrapper.copy().patients
+        ref_patients = self.patient_wrapper.copy().patients
+        # Ignoring times and patients with place
+        for combo in path[:start]:
+            patient = self.patient_wrapper.patients[combo[0]]
+            taken_hours.append(patient.pos_times[combo[1]])
+            patients.remove(patient)
+        
         rnd.shuffle(patients)
         for patient in patients:
             for p_index, ref_patient in enumerate(ref_patients):
