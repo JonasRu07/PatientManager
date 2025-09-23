@@ -252,7 +252,7 @@ class PatientManagerUI:
         self.b_new_patient.place(x=20, y=20, width=100, height=35)
 
     def call_new_patient(self):
-        raise NotImplementedError
+        self.controller.handle_add_patient_ui()
 
     def scroll_ui(self, up:bool) -> None:
         delta = 10
@@ -323,14 +323,14 @@ class EditPatientUI:
     
     def __init__(self, 
                  controller:'UIController',
-                 parent: tk.Toplevel,
-                 patient:Patient,
+                 parent: tk.Tk | tk.Toplevel,
+                 patient:Patient | None,
                  week_buffer:Week) -> None:
         
         
         self.controller = controller
         self.week_buffer = week_buffer
-        self.patient = patient
+        self.patient = patient if patient is not None else Patient('', [])
         
         self.root = tk.Toplevel(parent)
         self.root.title('Add Patient')
@@ -484,9 +484,11 @@ class EditPatientUI:
         self.b_confirm.place(x=20, y=100, width=160, height=30)
         
     def call_confirm(self):
-        self.controller.handle_call_confirm_edit_patient(self.patient,
-                                                         self.e_patient_name.get(),
-                                                         self.pos_hours)
+        if self.controller.handle_call_confirm_edit_patient(self.patient,
+                                                            self.e_patient_name.get(),
+                                                            self.pos_hours):
+            self.destroy()
+            
     def add_hour_to_pos_hours(self, index:int) -> None:
         print(self.week_buffer.hours[index].ID)
         if self.week_buffer.hours[index].ID in self.pos_hours:
@@ -499,7 +501,5 @@ class EditPatientUI:
                                            activebackground='green')
     def destroy(self):
         self.root.destroy()
-        
-        
         
         

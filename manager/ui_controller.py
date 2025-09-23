@@ -1,4 +1,4 @@
-from .gui import MainGUI, PatientManagerUI
+from .gui import MainGUI, PatientManagerUI, EditPatientUI
 from .patient import Patient
 
 from typing import TYPE_CHECKING
@@ -37,19 +37,28 @@ class UIController:
         self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
         return True
     
-    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
-        raise NotImplementedError
+    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> bool:
+        self.base_controller.edit_patient(patient, Patient(name, pos_hours))
+        self.ui.load_patients(self.base_controller.patient_manager.patients)
+        return True
         
     def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
         self.base_controller.delete_patient(patient)
         ui.load_patients(self.base_controller.patient_manager.patients)
-    
                
     def handle_patient_manager_ui(self) -> None:
-        ui = PatientManagerUI(self, self.main_ui.root)
-        ui.load_patients(self.base_controller.patient_manager.patients)
-        ui.start()
+        self.ui = PatientManagerUI(self, self.main_ui.root)
+        self.ui.load_patients(self.base_controller.patient_manager.patients)
+        self.ui.start()
         
+    def handle_add_patient_ui(self) -> None:
+        ui = EditPatientUI(
+            self,
+            self.main_ui.root,
+            None,
+            self.base_controller.week.copy())
+    
+    
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
         self.main_ui.start()
