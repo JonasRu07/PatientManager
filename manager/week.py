@@ -11,7 +11,7 @@ class Week:
     path: str: (optional) Path to the config file to load the hors from
     hours: list[Hour,]: (optional) Hours containing the week
     """
-    def __init__(self, path:str=os.path.join(".", "configs", "hours.json"), hours:list[Hour, ]=[]) -> None:
+    def __init__(self, path:str=os.path.join("manager", "config", "hours.json"), hours:list[Hour, ]=[]) -> None:
         if hours == []:
             self.hours = InputHours.load(path)
         else:
