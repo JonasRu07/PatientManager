@@ -118,12 +118,24 @@ class Solver:
     def kinda_good(self):
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
                                      self.week.copy())
+        # Pulling n umber out of my ass
+        gens_per_patient = 10
+        print(f"Total Generations to calculate: {gens_per_patient*len(self.patient_manager.patients)}")
+        
         current_path = []
         current_path_evaluation = 0
         best_path = []
         best_path_evaluation = 0
-        for i in range(1):
+        # Generating a good baseline
+        for i in range(gens_per_patient):
             current_path = solution_path.gen_path()
+            current_path_evaluation = solution_path.evaluate_path(current_path)
+            if current_path_evaluation > best_path_evaluation:
+                best_path_evaluation = current_path_evaluation
+                best_path = current_path
+        # Evolving around the best path
+        for i in range(1, len(self.patient_manager.patients)):
+            current_path = solution_path.gen_path_option(start=i)
             current_path_evaluation = solution_path.evaluate_path(current_path)
             if current_path_evaluation > best_path_evaluation:
                 best_path_evaluation = current_path_evaluation
@@ -165,8 +177,32 @@ class SolutionPath:
             path.append([p_index, h_index])
         return path
                 
-    def gen_path_option(self, index):
-        raise NotImplementedError
+    def gen_path_option(self, start:int):
+        path = []
+        taken_hours = []
+        
+        patients = self.patient_wrapper.copy().patients[start:]
+        ref_patients = self.patient_wrapper.copy().patients[start:]
+        rnd.shuffle(patients)
+        for patient in patients:
+            for p_index, ref_patient in enumerate(ref_patients):
+                if ref_patient == patient:
+                    break
+            else:
+                raise ValueError("Cannot find patient in ref_patients")
+            pos_hours = copy.deepcopy(patient.pos_times)
+            rnd.shuffle(pos_hours)
+            for pos_hour in pos_hours:
+                if pos_hour not in taken_hours:
+                    taken_hours.append(pos_hour)
+                    break
+            else:
+                # All of the hours the patient can attend to already
+                # have been taken
+                continue
+            h_index = patient.pos_times.index(pos_hour)
+            path.append([p_index, h_index])
+        return path
     
     def evaluate_path(self, path:list[list[int,]]) -> int:
         # There ,ay be more to it. but who cares
