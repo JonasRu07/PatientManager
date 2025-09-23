@@ -14,7 +14,7 @@ class MainGUI:
         
         self.root = tk.Tk()
         self.root.title('Patient Manager')
-        self.root.geometry('1250x580')
+        self.root.geometry('1250x620')
         self.root.configure(background='#1f1f1f')
         self.root.bind('<Escape>', lambda event : self.close())
         
@@ -32,6 +32,7 @@ class MainGUI:
                       "1600",
                       "1700",
                       "1800",
+                      "1900"
                       ]
         
         self.__POSITIONS_CONSTANTS = \
@@ -73,6 +74,7 @@ class MainGUI:
                         "1600" : (20, 20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.__POSITIONS_CONSTANTS["Time"]["height"]+10)*9),
                         "1700" : (20, 20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.__POSITIONS_CONSTANTS["Time"]["height"]+10)*10),
                         "1800" : (20, 20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.__POSITIONS_CONSTANTS["Time"]["height"]+10)*11),
+                        "1900" : (20, 20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.__POSITIONS_CONSTANTS["Time"]["height"]+10)*12),
                     }
             }
         # Frame Time
@@ -84,7 +86,7 @@ class MainGUI:
         self.f_time_table.place(x=10,
                                 y=10,
                                 width= 20 + self.__POSITIONS_CONSTANTS["Time"]["width"] + 20 + 5*(self.__POSITIONS_CONSTANTS["Day"]["width"] + 20),
-                                height=20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + 12*(self.__POSITIONS_CONSTANTS["Time"]["height"] + 10))
+                                height=20 + self.__POSITIONS_CONSTANTS["Day"]["height"] + 20 + 13*(self.__POSITIONS_CONSTANTS["Time"]["height"] + 10))
         
         # Labels Day
         self.ls_day : list[tk.Label] = []
@@ -121,7 +123,7 @@ class MainGUI:
         self.f_interaction.place(x=10 + 20 + self.__POSITIONS_CONSTANTS["Time"]["width"] + 20 + 5*(self.__POSITIONS_CONSTANTS["Day"]["width"] + 20) + 10,
                                  y=10,
                                  width=200,
-                                 height=560)
+                                 height=600)
         
         # Button Solve define
         self.b_solve_define = tk.Button(master=self.f_interaction,
@@ -334,7 +336,7 @@ class EditPatientUI:
         
         self.root = tk.Toplevel(parent)
         self.root.title('Add Patient')
-        self.root.geometry('1320x580')
+        self.root.geometry('1360x580')
         self.root.configure(background='#1e1f22')
         self.root.bind('<Escape>', lambda event: self.destroy())
 
@@ -360,6 +362,7 @@ class EditPatientUI:
                       "1600",
                       "1700",
                       "1800",
+                      "1900"
                       ]
         
         self.POSITIONS_CONSTANTS = \
@@ -401,6 +404,7 @@ class EditPatientUI:
                         "1600" : (20, 20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.POSITIONS_CONSTANTS["Time"]["height"]+10)*9),
                         "1700" : (20, 20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.POSITIONS_CONSTANTS["Time"]["height"]+10)*10),
                         "1800" : (20, 20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.POSITIONS_CONSTANTS["Time"]["height"]+10)*11),
+                        "1900" : (20, 20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + (self.POSITIONS_CONSTANTS["Time"]["height"]+10)*12),
                     }
             }
         # Frame Time
@@ -412,7 +416,7 @@ class EditPatientUI:
         self.f_time_table.place(x=10,
                                 y=10,
                                 width= 20 + self.POSITIONS_CONSTANTS["Time"]["width"] + 20 + 5*(self.POSITIONS_CONSTANTS["Day"]["width"] + 20),
-                                height=20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + 12*(self.POSITIONS_CONSTANTS["Time"]["height"] + 10))
+                                height=20 + self.POSITIONS_CONSTANTS["Day"]["height"] + 20 + 13*(self.POSITIONS_CONSTANTS["Time"]["height"] + 10))
         
         # Labels Day
         self.ls_day : list[tk.Label] = []
