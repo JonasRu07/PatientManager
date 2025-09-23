@@ -143,7 +143,8 @@ class Solver:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
                 print(f"New best evaluation = {best_path_evaluation}")
-        print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients")
+        print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients"
+              + f"with an evaluation of {best_path_evaluation}")
         return solution_path.get_week(best_path, self.week.copy())
 
     
@@ -214,9 +215,48 @@ class SolutionPath:
             path.append([p_index, h_index])
         return path
     
-    def evaluate_path(self, path:list[list[int,]]) -> int:
-        # There ,ay be more to it. but who cares
-        return len(path)
+    def evaluate_path(self, path:list[list[int,]]) -> float | int:
+        evaluation = 0
+        # Constants:
+        # The higher absolute number is, the more important is the 
+        # condition. But is also highly influenced by the absolute
+        # occurrence of the event. Ex: there may be 40 patients which
+        # each have a multiplier of 10, but the time_limit condition 
+        # can only be triggered 5 times. So the time limit has less 
+        # of an effect than the number of patients even if the value
+        # is absolute bigger
+        NUMBER_PATIENTS = 10
+        CONSECUTIVE_HOURS = 2.5
+        TIME_LIMIT = -10
+        
+        
+        # The more patients the better
+        evaluation += len(path) * NUMBER_PATIENTS
+        # Try to clamp the patients together
+        days = [[], [], [], [], []]
+        for combo in path:
+            patient = self.patient_wrapper.patients[combo[0]]
+            hour_id = patient.pos_times[combo[1]]
+            days[hour_id >> 4].append(hour_id)
+        consecutive_hours = 0
+        for day in days:
+            current_id = -2
+            for hour_id in day:
+                if hour_id - 1 == current_id:
+                    consecutive_hours += 1
+                current_id = hour_id
+                
+        evaluation += consecutive_hours * CONSECUTIVE_HOURS
+        
+        # I dont't want to work for more than 8 hours a day
+        bad_days = 0
+        for day in days:
+            day.sort()
+            if day[-1] - day[0] > 8:
+                bad_days += 1
+        evaluation += bad_days*TIME_LIMIT
+        
+        return evaluation
     
     def get_week(self, path:list[list[int,]], week:Week) -> Week:
         for combo in path:
