@@ -1,8 +1,13 @@
+import copy
+import random as rnd
+from hashlib import sha256
+
 from .patient import Patient
 from .patient_manager import PatientManager
 from .patient_wrapper import PatientWrapper
 from .week import Week
 from .hour import Hour
+
 
 class Solver:
     def __init__(self, patient_manager:PatientManager, week:Week) -> None:
@@ -109,3 +114,69 @@ class Solver:
                     solutions += self.__all_solutions(new_pw, new_week, start=hour_index)
 
         return solutions
+    
+    def kinda_good(self):
+        solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
+                                     self.week.copy())
+        current_path = []
+        current_path_evaluation = 0
+        best_path = []
+        best_path_evaluation = 0
+        for i in range(1):
+            current_path = solution_path.gen_path()
+            current_path_evaluation = solution_path.evaluate_path(current_path)
+            if current_path_evaluation > best_path_evaluation:
+                best_path_evaluation = current_path_evaluation
+                best_path = current_path
+        return solution_path.get_week(best_path, self.week.copy())
+
+    
+class SolutionPath:
+    def __init__(self,
+                 pw:PatientWrapper,
+                 week:Week) -> None:
+        self.patient_wrapper = pw.copy()
+        self.week = week.copy()
+        
+    def gen_path(self):
+        path = []
+        taken_hours = []
+        
+        patients = self.patient_wrapper.copy().patients
+        ref_patients = self.patient_wrapper.copy().patients
+        rnd.shuffle(patients)
+        for patient in patients:
+            for p_index, ref_patient in enumerate(ref_patients):
+                if ref_patient == patient:
+                    break
+            else:
+                raise ValueError("Cannot find patient in ref_patients")
+            pos_hours = copy.deepcopy(patient.pos_times)
+            rnd.shuffle(pos_hours)
+            for pos_hour in pos_hours:
+                if pos_hour not in taken_hours:
+                    taken_hours.append(pos_hour)
+                    break
+            else:
+                # All of the hours the patient can attend to already
+                # have been taken
+                continue
+            h_index = patient.pos_times.index(pos_hour)
+            path.append([p_index, h_index])
+        return path
+                
+    def gen_path_option(self, index):
+        raise NotImplementedError
+    
+    def evaluate_path(self, path:list[list[int,]]) -> int:
+        # There ,ay be more to it. but who cares
+        return len(path)
+    
+    def get_week(self, path:list[list[int,]], week:Week) -> Week:
+        for combo in path:
+            patient = self.patient_wrapper.patients[combo[0]]
+            for hour in week.hours:
+                if hour.ID == patient.pos_times[combo[1]]:
+                    hour.taken_by = patient
+                    break
+        return week

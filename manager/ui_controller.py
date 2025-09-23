@@ -26,6 +26,10 @@ class UIController:
             print(f'Found {len(solutions)} Solutions. Taking the First one')
             self.main_ui.load_hours(solutions[0].hours)
             
+    def handle_solve_evolution(self) -> None:
+        self.base_controller.solve_evolution()
+        self.main_ui.load_hours(self.base_controller.week.hours)
+            
     def handle_call_add_patient(self, name:str, pos_hours:list[int,]) -> bool:
         for char in name:
             if not (char.isalnum() or char == ' '):

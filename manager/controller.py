@@ -33,6 +33,9 @@ class Controller:
     
     def solve_recursive_first(self) -> None:
         self.week = self.find_solution.all_solutions()[0]
+        
+    def solve_evolution(self):
+        self.week = self.find_solution.kinda_good()
     
     def close(self) -> None:
         print('Closing a controller instance')
