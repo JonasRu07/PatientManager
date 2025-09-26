@@ -1,4 +1,5 @@
 import copy
+import time
 import random as rnd
 from hashlib import sha256
 
@@ -116,11 +117,12 @@ class Solver:
         return solutions
     
     def kinda_good(self):
+        T = time.time()
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
                                      self.week.copy())
         # Pulling n umber out of my ass
-        gens_per_patient = 5000
-        print(f"Total Generations to calculate: {gens_per_patient*len(self.patient_manager.patients)}")
+        gens_per_patient = 100_000
+        print(f"Total Generations to calculate: {gens_per_patient*len(self.patient_manager.patients):,}")
         
         current_path = []
         current_path_evaluation = 0
@@ -134,6 +136,7 @@ class Solver:
             if current_path_evaluation > best_path_evaluation:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
+        print(best_path_evaluation)
 
         # Evolving around the best path
         for i in range(1, len(self.patient_manager.patients)):
@@ -145,6 +148,9 @@ class Solver:
                 print(f"New best evaluation = {best_path_evaluation}")
         print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients"
               + f"with an evaluation of {best_path_evaluation}")
+        
+        print(f"Calculation time: {time.time()-T:.2f} seconds.\n" +
+              f"{(time.time()-T)*1_000_000/(gens_per_patient*len(self.patient_manager.patients)):,.4f} microseconds per option")
         return solution_path.get_week(best_path, self.week.copy())
 
     
