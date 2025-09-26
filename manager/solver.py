@@ -159,27 +159,21 @@ class SolutionPath:
         path = []
         taken_hours = []
         
-        patients = self.patient_wrapper.copy().patients
-        ref_patients = self.patient_wrapper.copy().patients
-        rnd.shuffle(patients)
-        for patient in patients:
-            for p_index, ref_patient in enumerate(ref_patients):
-                if ref_patient == patient:
-                    break
-            else:
-                raise ValueError("Cannot find patient in ref_patients")
-            pos_hours = copy.deepcopy(patient.pos_times)
+        patients_id = [i for i in range(len(self.patient_wrapper.patients))]
+        rnd.shuffle(patients_id)
+        for patient_id in patients_id:
+            pos_hours = copy.deepcopy(self.patient_wrapper.patients[patient_id].pos_times)
             rnd.shuffle(pos_hours)
             for pos_hour in pos_hours:
                 if pos_hour not in taken_hours:
                     taken_hours.append(pos_hour)
+                    hour_index = self.patient_wrapper.patients[patient_id].pos_times.index(pos_hour)
                     break
             else:
                 # All of the hours the patient can attend to already
                 # have been taken
                 continue
-            h_index = patient.pos_times.index(pos_hour)
-            path.append([p_index, h_index, patient.name])
+            path.append([patient_id, hour_index])
         return path
                 
     def gen_path_option(self, path:list[list[int,]], start:int):
