@@ -141,21 +141,21 @@ class MainGUI:
                                         command=self.call_solve_recursive)
         self.b_solve_define.place(x=20, y=80, width=160, height=50)
         
-        # Button Patient manager
-        self.b_patient_managing = tk.Button(master=self.f_interaction,
-                                            background='#11515C',
-                                            foreground='#F0F0F0',
-                                            text='Manage patients',
-                                            command=self.call_patient_managing)
-        self.b_patient_managing.place(x=20, y=140, width=160, height=35)
-        
         # Button Solve Evolution
         self.b_solve_define = tk.Button(master=self.f_interaction,
                                         background='#11515C',
                                         foreground='#F0F0F0',
                                         text='Find evo \nanswers',
                                         command=self.call_solve_evolution)
-        self.b_solve_define.place(x=20, y=200, width=160, height=50)
+        self.b_solve_define.place(x=20, y=140, width=160, height=50)
+        
+        # Button Patient manager
+        self.b_patient_managing = tk.Button(master=self.f_interaction,
+                                            background='#11515C',
+                                            foreground='#F0F0F0',
+                                            text='Manage patients',
+                                            command=self.call_patient_managing)
+        self.b_patient_managing.place(x=20, y=210, width=160, height=35)
         
     def call_patient_managing(self) -> None:
         self.controller.handle_patient_manager_ui()
