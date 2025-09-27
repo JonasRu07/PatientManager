@@ -116,7 +116,7 @@ class Solver:
 
         return solutions
     
-    def kinda_good(self):
+    def evo_solution(self) -> Week:
         T = time.time()
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
                                      self.week.copy())
