@@ -122,35 +122,43 @@ class Solver:
                                      self.week.copy())
         # Pulling n umber out of my ass
         gens_per_patient = 100_000
-        print(f"Total Generations to calculate: {gens_per_patient*len(self.patient_manager.patients):,}")
         
         current_path = []
         current_path_evaluation = 0
         best_path = []
         best_path_evaluation = 0
         
+        exp_path = 0
+        
         # Generating a good baseline
         for i in range(gens_per_patient):
+            exp_path += 1
             current_path = solution_path.gen_path()
             current_path_evaluation = solution_path.evaluate_path(current_path)
             if current_path_evaluation > best_path_evaluation:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
-        print(best_path_evaluation)
 
         # Evolving around the best path
-        for i in range(1, len(self.patient_manager.patients)):
-            current_path = solution_path.gen_path_option(best_path, start=i)
-            current_path_evaluation = solution_path.evaluate_path(current_path)
-            if current_path_evaluation > best_path_evaluation:
-                best_path_evaluation = current_path_evaluation
-                best_path = current_path
-                print(f"New best evaluation = {best_path_evaluation}")
-        print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients"
+        count_patients = len(self.patient_manager.patients)
+        for depth in range(1, count_patients):
+            options = int((count_patients-depth)/count_patients * gens_per_patient)
+            for i in range(options):
+                exp_path += 1
+                current_path = solution_path.gen_path_option(best_path, start=depth)
+                current_path_evaluation = solution_path.evaluate_path(current_path)
+                if current_path_evaluation > best_path_evaluation:
+                    best_path_evaluation = current_path_evaluation
+                    best_path = current_path
+                    print(f"New best evaluation = {best_path_evaluation}")
+                    
+        print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients "
               + f"with an evaluation of {best_path_evaluation}")
         
-        print(f"Calculation time: {time.time()-T:.2f} seconds.\n" +
-              f"{(time.time()-T)*1_000_000/(gens_per_patient*len(self.patient_manager.patients)):,.4f} microseconds per option")
+        print(f"Calculation time: {time.time()-T:.2f} seconds. "
+              + f"{(time.time()-T)*1_000_000/exp_path:.3f} microseconds per path")
+        
+        print(f"Explored a total of {exp_path} Paths.")
         return solution_path.get_week(best_path, self.week.copy())
 
     
