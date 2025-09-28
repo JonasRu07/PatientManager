@@ -38,8 +38,10 @@ class UIController:
     def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> bool:
         raise NotImplementedError
         
-    def handle_call_delete_patient(self, patient:Patient) -> None:
-        raise NotImplementedError
+    def handle_call_delete_patient(self, patient_idx:int) -> None:
+        patient = self.base_controller.patient_manager.patients[patient_idx]
+        self.base_controller.delete_patient(patient)
+        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
               
     # Handle UI-Changes 
     def handle_patient_manager_ui(self) -> None:

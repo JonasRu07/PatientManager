@@ -460,8 +460,7 @@ class FrameMainManager:
             self.bs_deletion[-1].place(x=290, y=25*index+5, width=20, height=20)
             
     def call_patient_deletion(self, index:int) -> None:
-        raise NotImplementedError
-        self.controller.handle_call_delete_patient(self, self.patients[index])
+        self.controller.handle_call_delete_patient(index)
     
     def call_edit_patient(self, index:int) -> None:
         raise NotImplementedError
