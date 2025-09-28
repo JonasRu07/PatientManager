@@ -121,7 +121,7 @@ class Solver:
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
                                      self.week.copy())
         # Pulling n umber out of my ass
-        gens_per_patient = 100_000
+        gens_per_patient = 1000
         
         current_path = []
         current_path_evaluation = 0
@@ -259,9 +259,10 @@ class SolutionPath:
         # I dont't want to work for more than 8 hours a day
         bad_days = 0
         for day in days:
-            day.sort()
-            if day[-1] - day[0] > 8:
-                bad_days += 1
+            if len(day) > 0:
+                day.sort()
+                if day[-1] - day[0] > 8:
+                    bad_days += 1
         evaluation += bad_days*TIME_LIMIT
         
         return evaluation
