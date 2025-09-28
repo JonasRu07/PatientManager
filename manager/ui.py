@@ -3,6 +3,7 @@ import tkinter.ttk as ttk
 from typing import TypedDict, Literal
 
 from .hour import Hour
+from .patient import Patient
 
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
@@ -59,7 +60,6 @@ class UITypes:
             "1700" : tuple[int, int],
             "1800" : tuple[int, int],
             "1900" : tuple[int, int],
-            
         }
     )
     Positions = TypedDict(
@@ -68,17 +68,21 @@ class UITypes:
             "Day" : __DayPos,
             "Time" : __TimePos
         })
-    States = Literal["Main"]
+    States = Literal["Main", "Manager"]
     Frames = TypedDict(
         "Frames",
         {
-            "Main" : 'FrameMainWindow'
+            "Main" : 'FrameMainWindow',
+            "Manager" : 'FrameMainManager'
         }
     )
 
 class MainUI:
     def __init__(self, controller:'UIController') -> None:
         self.controller = controller
+        
+        self.hours = []
+        self.patients = []
         
         # Window:
         self.root = tk.Tk()
@@ -90,14 +94,33 @@ class MainUI:
         # States
         self.current_state:UITypes.States = "Main"
         self.frames:UITypes.Frames = {
-            "Main" : FrameMainWindow(self.controller, self.root)
+            "Main" : FrameMainWindow(self.controller, self.root),
+            "Manager" : FrameMainManager(self.controller, self.root)
         }
         
-    def load_hours(self, hours:list[Hour,]):
+    def load_hours(self, hours:list[Hour,]|None=None):
         """
         Load the given hours into the current UI
         """
-        self.frames[self.current_state].load_hours(hours)
+        if hours is not None:
+            self.hours = hours
+        if hasattr(self.frames[self.current_state], "load_hours"):
+            self.frames[self.current_state].load_hours(self.hours) # type: ignore
+            
+    def load_patients(self, patients:list[Patient,]|None=None):
+        """
+        Load the given patients into the current UI
+        """
+        if patients is not None:
+            self.patients = patients
+        if hasattr(self.frames[self.current_state], "load_patients"):
+            self.frames[self.current_state].load_patients(self.patients) # type: ignore
+            
+    def load_frame(self, frame:UITypes.States) -> None:
+        self.frames[self.current_state].hide()
+        self.current_state = frame
+        self.frames[self.current_state].load()
+        
     
     def start(self):
         """
@@ -112,11 +135,14 @@ class MainUI:
         """
         if self.current_state == "Main":
             self.destroy()
+        elif self.current_state == "Manager":
+            self.current_state = "Main"
+            self.frames["Manager"].hide()
+            self.frames["Main"].load()
         
     def destroy(self):
         """
-        Close all windows and ignore everything that will be thrown
-        at it.
+        Close all windows
         """
         self.root.destroy()
         
@@ -253,7 +279,7 @@ class FrameMainWindow:
                                    height=self.POS_CONSTANTS['Time']["height"])
         
         # Frame User Interaction
-        self.f_interaction = tk.Frame(master=self.root,
+        self.f_interaction = tk.Frame(master=self.main,
                                      background='#333333',
                                      border=2,
                                      cursor='arrow',
@@ -328,4 +354,130 @@ class FrameMainWindow:
                                     height=self.POS_CONSTANTS["Time"]["px_per_hour"] * hour.duration / 60)
         
     def load(self,) -> None:
+        print("Placing Main")
         self.main.place(x=0, y=0)
+        
+    def hide(self) -> None:
+        self.main.place_forget()
+        
+class FrameMainManager:
+    """
+    Main Frame for the Manager "window" 
+    """
+    def __init__(self, controller:'UIController', root:tk.Tk) -> None:
+        self.controller = controller
+        self.root = root
+        
+        # Tkinter has some dodgy behavior so force update
+        self.root.update()
+        
+        # Main Frame
+        self.main = tk.Frame(master=self.root,
+                             background="#1F1F1F",
+                            #  background="red",
+                             width=self.root.winfo_width(),
+                             height=self.root.winfo_height())
+        
+        self.bs_patients:list[tk.Button] = []
+        self.bs_deletion:list[tk.Button] = []
+
+        self.window_height = self.root.winfo_height()
+        self.f_patients_position = [10, 0, 320, self.root.winfo_height()]
+        
+        # List of all patients
+        self.f_patients = tk.Frame(master=self.main,
+                                   background='#2b2d30',
+                                   border=2,
+                                   relief='solid')
+        self.f_patients.place(x=10,
+                              y=0,
+                              width=320,
+                              height=self.root.winfo_height()-20)
+
+        # Show options
+        self.f_options = tk.Frame(master=self.main,
+                                    background='#2b2d30',
+                                    border=2,
+                                    relief='solid')
+        self.f_options.place(x=340, y=10, width=140, height=self.root.winfo_height()-20)
+        
+        self.b_new_patient = tk.Button(self.f_options,
+                                       background='#11515C',
+                                       foreground='#F0F0F0',
+                                       text='New Patient',
+                                       command=self.call_new_patient)
+        self.b_new_patient.place(x=20, y=20, width=100, height=35)
+
+    def call_new_patient(self):
+        self.controller.handle_add_patient_ui()
+
+    def scroll_ui(self, up:bool) -> None:
+        delta = 10
+        if up:
+            if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
+                self.f_patients_position[1] -= delta
+            else:
+                self.f_patients_position[1] = self.window_height - self.f_patients_position[3]
+        else:
+            if self.f_patients_position[1] > -delta -10:
+                self.f_patients_position[1] = 0
+            else:
+                self.f_patients_position[1] += delta
+
+        self.f_patients.place(x=self.f_patients_position[0],
+                              y=self.f_patients_position[1],
+                              width=self.f_patients_position[2],
+                              height=self.f_patients_position[3])
+
+
+    def load_patients(self, patients:list[Patient,]) -> None:
+        print('Loading patients to show')
+        self.patients = patients
+        # Delete old labels
+        for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
+            b_patient.destroy()
+            b_delete.destroy()
+        self.bs_patients = []
+        self.bs_deletion = []
+        
+        
+        count_patients = len(patients)
+        self.f_patients_position[3] = max(count_patients*25 + 10, self.root.winfo_height())
+
+        for index, patient in enumerate(patients):
+            self.bs_patients.append(tk.Button(master=self.f_patients,
+                                             background='#ACAB00',
+                                             foreground='#000000',
+                                             text=patient.name,
+                                             command=lambda i=index : self.call_edit_patient(i)))
+            self.bs_patients[-1].place(x=10, y=25*index+5, width=270, height=20)
+            
+            self.bs_deletion.append(tk.Button(master=self.f_patients,
+                                              background="#C00812",
+                                              foreground='#081505',
+                                              text="X",
+                                              command=lambda i=index : self.call_patient_deletion(i)))
+            self.bs_deletion[-1].place(x=290, y=25*index+5, width=20, height=20)
+            
+    def call_patient_deletion(self, index:int) -> None:
+        raise NotImplementedError
+        self.controller.handle_call_delete_patient(self, self.patients[index])
+    
+    def call_edit_patient(self, index:int) -> None:
+        raise NotImplementedError
+        edit_ui = EditPatientUI(self.controller, self.root, self.patients[index], self.controller.base_controller.week)
+        edit_ui.root.mainloop()
+
+    def start(self) -> None:
+        self.root.mainloop()
+        
+    def destroy(self) -> None:
+        self.root.destroy()
+        
+    def load(self) -> None:
+        self.root.bind("<Button-4>", lambda event:self.scroll_ui(up=False))
+        self.root.bind("<Button-5>", lambda event:self.scroll_ui(up=True))
+        self.main.place(x=0, y=0)
+        
+    def hide(self) -> None:
+        self.main.place_forget()

@@ -1,4 +1,3 @@
-from .gui import MainGUI, PatientManagerUI, EditPatientUI
 from .ui import MainUI
 from .patient import Patient
 
@@ -14,6 +13,7 @@ class UIController:
         
         self.main_ui = MainUI(self)
         
+    # Solution functions
     def handle_solve_define(self) -> None:
         self.base_controller.solve_define_answers()
         self.main_ui.load_hours(self.base_controller.week.hours)
@@ -30,35 +30,24 @@ class UIController:
     def handle_solve_evolution(self) -> None:
         self.base_controller.solve_evolution()
         self.main_ui.load_hours(self.base_controller.week.hours)
-            
+
+    # UI-Calls
     def handle_call_add_patient(self, name:str, pos_hours:list[int,]) -> bool:
-        for char in name:
-            if not (char.isalnum() or char == ' '):
-                return False
-        self.base_controller.add_patient(Patient(name, pos_times=pos_hours))
-        return True
+        raise NotImplementedError
     
     def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> bool:
-        self.base_controller.edit_patient(patient, Patient(name, pos_hours))
-        self.ui.load_patients(self.base_controller.patient_manager.patients)
-        return True
+        raise NotImplementedError
         
-    def handle_call_delete_patient(self, ui:PatientManagerUI, patient:Patient) -> None:
-        self.base_controller.delete_patient(patient)
-        ui.load_patients(self.base_controller.patient_manager.patients)
-               
+    def handle_call_delete_patient(self, patient:Patient) -> None:
+        raise NotImplementedError
+              
+    # Handle UI-Changes 
     def handle_patient_manager_ui(self) -> None:
-        self.ui = PatientManagerUI(self, self.main_ui.root)
-        self.ui.load_patients(self.base_controller.patient_manager.patients)
-        self.ui.start()
+        self.main_ui.load_frame("Manager")
+        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
         
     def handle_add_patient_ui(self) -> None:
-        ui = EditPatientUI(
-            self,
-            self.main_ui.root,
-            None,
-            self.base_controller.week.copy())
-    
+        raise NotADirectoryError    
     
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
