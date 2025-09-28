@@ -1,4 +1,5 @@
 from .gui import MainGUI, PatientManagerUI, EditPatientUI
+from .ui import MainUI
 from .patient import Patient
 
 from typing import TYPE_CHECKING
@@ -11,7 +12,7 @@ class UIController:
             
         self.base_controller = controller
         
-        self.main_ui = MainGUI(self)
+        self.main_ui = MainUI(self)
         
     def handle_solve_define(self) -> None:
         self.base_controller.solve_define_answers()
