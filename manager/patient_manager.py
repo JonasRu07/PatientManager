@@ -6,9 +6,11 @@ from .patient_wrapper import PatientWrapper
 class PatientManager:
     def __init__(self) -> None:
         self.patients:list[Patient] = InputPatients.load()
+        self.patients.sort(key=lambda x:x.name)
         
     def add_patient(self, patient:Patient) -> None:
         self.patients.append(patient)
+        self.patients.sort(key=lambda x:x.name)
         
     def delete_patient(self, target_patient:Patient, _raise:bool=False) -> bool:
         for index, patient in enumerate(self.patients):
