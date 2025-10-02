@@ -32,9 +32,6 @@ class UIController:
         self.main_ui.load_hours(self.base_controller.week.hours)
 
     # UI-Calls
-    def handle_call_add_patient(self, name:str, pos_hours:list[int,]) -> bool:
-        raise NotImplementedError
-    
     def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
         # Name should not be empty and only chars and spaces
         if name == '': return 
@@ -61,6 +58,11 @@ class UIController:
         
     def handle_add_patient_ui(self) -> None:
         self.main_ui.load_frame("EditPatient")
+        
+    def handle_edit_patient_ui(self, index:int) -> None:
+        patient = self.base_controller.patient_manager.patients[index]
+        self.main_ui.load_frame("EditPatient")
+        self.main_ui.load_patient(patient)
     
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)

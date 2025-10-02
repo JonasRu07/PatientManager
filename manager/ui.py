@@ -124,7 +124,10 @@ class MainUI:
         self.current_state = frame
         self.frames[self.current_state].load()
         
-    
+    def load_patient(self, patient:Patient) -> None:
+        if hasattr(self.frames[self.current_state], "load_patient"):
+            self.frames[self.current_state].load_patient(patient) # type: ignore
+            
     def start(self):
         """
         Start of the internal logic of the UI
@@ -470,9 +473,7 @@ class FrameMainManager:
         self.controller.handle_call_delete_patient(index)
     
     def call_edit_patient(self, index:int) -> None:
-        raise NotImplementedError
-        edit_ui = EditPatientUI(self.controller, self.root, self.patients[index], self.controller.base_controller.week)
-        edit_ui.root.mainloop()
+        self.controller.handle_edit_patient_ui(index)
 
     def start(self) -> None:
         self.root.mainloop()
@@ -694,6 +695,19 @@ class FrameEditPatient:
             self.bs_hours[index].configure(background='green',
                                            activebackground='green')
     
+    def load_patient(self, patient:Patient) -> None:
+        self.patient = patient
+        self.patient_name = patient.name
+        self.pos_hours = patient.pos_times
+        self.e_patient_name.insert('end', patient.name)
+        for index, button in enumerate(self.bs_hours):
+            if self.week.hours[index].ID in self.pos_hours:
+                button.configure(background='green',
+                                 activebackground='green')
+            else:
+                button.configure(background='red',
+                                 activebackground='red')
+    
     def load(self,) -> None:
         self.main.place(x=0, y=0)
         
@@ -701,4 +715,8 @@ class FrameEditPatient:
         self.patient_name = ''
         self.pos_hours = []
         self.patient = Patient(self.patient_name, self.pos_hours)
+        self.e_patient_name.delete(0, 'end')
+        self.e_patient_name.insert('end', '')
+        for button in self.bs_hours:
+            button.configure(background='red')
         self.main.place_forget()
