@@ -35,8 +35,19 @@ class UIController:
     def handle_call_add_patient(self, name:str, pos_hours:list[int,]) -> bool:
         raise NotImplementedError
     
-    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> bool:
-        raise NotImplementedError
+    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
+        # Name should not be empty and only chars and spaces
+        if name == '': return 
+        for split in name.split(' '):
+            if not split.isalpha():
+                return
+        new_patient = Patient(name, pos_hours)
+        if patient.name == '':
+            self.base_controller.add_patient(new_patient)
+        else:
+            self.base_controller.edit_patient(patient, new_patient)
+        self.main_ui.load_frame("Manager")
+        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
         
     def handle_call_delete_patient(self, patient_idx:int) -> None:
         patient = self.base_controller.patient_manager.patients[patient_idx]
@@ -49,7 +60,7 @@ class UIController:
         self.main_ui.load_patients(self.base_controller.patient_manager.patients)
         
     def handle_add_patient_ui(self) -> None:
-        raise NotADirectoryError    
+        self.main_ui.load_frame("EditPatient")
     
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
