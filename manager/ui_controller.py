@@ -66,7 +66,7 @@ class UIController:
     
     def start(self) -> None:    
         self.main_ui.load_hours(self.base_controller.week.hours)
-        self.main_ui.start()
+        self.main_ui.load()
         
     def terminate(self) -> None:
         print('Terminating the process')

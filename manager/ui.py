@@ -138,7 +138,7 @@ class MainUI(BaseUI):
         if hasattr(self.frames[self.current_state], "load_patient"):
             self.frames[self.current_state].load_patient(patient) # type: ignore
             
-    def start(self):
+    def load(self):
         """
         Start of the internal logic of the UI
         """
@@ -486,9 +486,6 @@ class FrameMainManager(BaseUI):
     
     def call_edit_patient(self, index:int) -> None:
         self.controller.handle_edit_patient_ui(index)
-
-    def start(self) -> None:
-        self.root.mainloop()
         
     def destroy(self) -> None:
         self.root.destroy()
