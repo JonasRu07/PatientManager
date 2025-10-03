@@ -79,9 +79,19 @@ class UITypes:
         }
     )
 
-class MainUI:
-    def __init__(self, controller:'UIController') -> None:
-        self.controller = controller
+class BaseUI:
+    def __init__(self, con:'UIController'):
+        self.controller = con
+        
+    def hide(self):
+        raise NotImplementedError("Missing function to hide UI")
+    
+    def load(self):
+        raise NotImplementedError("Missing function to load UI")
+
+class MainUI(BaseUI):
+    def __init__(self, con:'UIController'):
+        super().__init__(con)
         
         self.hours = []
         self.patients = []
@@ -156,9 +166,10 @@ class MainUI:
         """
         self.root.destroy()
         
-class FrameMainWindow:
-    def __init__(self, controller:'UIController', root_window:tk.Tk) -> None:
-        self.controller = controller
+class FrameMainWindow(BaseUI):
+    def __init__(self, con:'UIController', root_window:tk.Tk):
+        super().__init__(con)
+        
         self.root = root_window
         
         # Constants
@@ -370,13 +381,14 @@ class FrameMainWindow:
     def hide(self) -> None:
         self.main.place_forget()
         
-class FrameMainManager:
+class FrameMainManager(BaseUI):
     """
     Main Frame for the Manager "window" 
     """
-    def __init__(self, controller:'UIController', root:tk.Tk) -> None:
-        self.controller = controller
-        self.root = root
+    def __init__(self, con:'UIController', root_window:tk.Tk):
+        super().__init__(con)
+        
+        self.root = root_window
         
         # Tkinter has some dodgy behavior so force update
         self.root.update()
@@ -489,15 +501,14 @@ class FrameMainManager:
     def hide(self) -> None:
         self.main.place_forget()
         
-        
-class FrameEditPatient:
-    def __init__(self, controller:'UIController', root:tk.Tk) -> None:
-        """
-        This UI is responsible to allow the User to edit the Hours the 
-        patient can attend to etc
-        """
-        self.controller = controller
-        self.root = root
+class FrameEditPatient(BaseUI):
+    """
+    This UI is responsible to allow the User to edit the Hours the 
+    patient can attend to etc
+    """
+    def __init__(self, con:'UIController', root_window:tk.Tk):
+        super().__init__(con)
+        self.root = root_window
 
         self.patient_name = ''
         self.pos_hours:list[int] = []
