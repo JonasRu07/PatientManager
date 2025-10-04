@@ -1,3 +1,42 @@
+"""
+UI implementation for the application.
+It is based on FOSS-library tkinter for the graphics part.
+
+The connection to the UI-Controller is handled over the MainUI class.
+
+Inside this file the word "window" may refer to either a own instance 
+of a window (tk.Tk() / tk.Toplevel()), or, when used in quotation marks
+it refers to a context. Those context are (mostly) independent from
+each other. Those are for example the mainpage, and and editorial page.
+
+Different "windows" are represented as different Frames, which are 
+loaded and unloaded, dependent on the current selected window.
+
+Each Frame inheritances from the BaseUI to ensure properly and 
+consistent implementation of showing hand hiding methods for the Frame.
+
+Each Frames has reference to the UI-Controller to handle User-Inputs
+and a reference to the root window, to tell tkinter, where the Frame
+is supposed to be placed.
+
+A Frame also can have SubFrames. They should keep knowledge of the
+UI-Controller and their parent.
+
+Local Naming Convention:
+    Classes that create their own proper Window (ex. via tk.Tk()) 
+        should have a UI at the end
+    Classes that represent a "window" should be prefixed with "Frame"
+    Classes that are supporting frames for "windows" should be prefixed
+        with SubFrame
+    Functions that are called from he User-Input (Buttons, ...) should
+        be prefixed with call_...
+
+Raises:
+    UIMissingMethod: load() from BaseFrame is not overwritten
+    UIMissingMethod: hide() from BaseFrame is not overwritten
+
+"""
+
 import tkinter as tk
 import tkinter.ttk as ttk
 from typing import TypedDict, Literal
@@ -10,18 +49,26 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .ui_controller import UIController
 
+class UIMissingMethod(Exception):
+    def __init__(self, hint:str) -> None:
+        super().__init__(hint)
+
 class UITypes:
+    """
+    Class keeps track of more complex types inside the UI-file for 
+    type hinting, within reasonable space use.
+    """
     Days = list[str]
     Times = list[str]
-    __DayConst = TypedDict(
-        "__DayConst",
+    DayConst = TypedDict(
+        "DayConst",
         {
             "width" : int,
             "height" : int
         }
     )
-    __TimeConst = TypedDict(
-        "__TimeConst",
+    TimeConst = TypedDict(
+        "TimeConst",
         {
             "width" : int,
             "height" : int,
@@ -31,12 +78,12 @@ class UITypes:
     PosConstants = TypedDict(
         "PosConstants",
         {
-            "Day" : __DayConst,
-            "Time" : __TimeConst
+            "Day" : DayConst,
+            "Time" : TimeConst
         }
     )
-    __DayPos = TypedDict(
-        "__DayPos",
+    DayPos = TypedDict(
+        "DayPos",
         {
             "Monday" : tuple[int, int],
             "Tuesday" : tuple[int, int],
@@ -45,8 +92,8 @@ class UITypes:
             "Friday" : tuple[int, int]
         }
     )
-    __TimePos = TypedDict(
-        "__TimePos",
+    TimePos = TypedDict(
+        "TimePos",
         {
             "0700" : tuple[int, int],
             "0800" : tuple[int, int],
@@ -66,32 +113,49 @@ class UITypes:
     Positions = TypedDict(
         "Positions",
         {
-            "Day" : __DayPos,
-            "Time" : __TimePos
+            "Day" : DayPos,
+            "Time" : TimePos
         })
     States = Literal["Main", "Manager", "EditPatient"]
     Frames = TypedDict(
         "Frames",
         {
             "Main" : 'FrameMainWindow',
-            "Manager" : 'FrameMainManager',
+            "Manager" : 'FrameManager',
             "EditPatient" : 'FrameEditPatient'
         }
     )
 
-class BaseUI:
+
+class BaseFrame:
+    """
+    Minimum requirement for any frames used. To keep them consistent.
+    """
+    def __init__(self, con:'UIController', root_window:tk.Tk|tk.Frame):
+        self.controller = con
+        self.root = root_window
+        
+    def hide(self) -> None:
+        raise UIMissingMethod("Missing function to hide UI")
+    
+    def load(self) -> None:
+        raise UIMissingMethod("Missing function to load UI")
+
+class MainUI:
+    """
+    Main proper window for the whole application.
+    
+    It keeps track of all frames, which may appear during the us of the
+    app.
+    
+    If a new Frame... is added, add it in the frames dict and adjust 
+    the closing hierarchy in the close method. Also update the UITypes.
+    As it is the interaction point. It also has all loading functions, 
+    as not all Frames support all loading functions, make sure only 
+    frames, which support the function call be called.
+    """
     def __init__(self, con:'UIController'):
         self.controller = con
-        
-    def hide(self):
-        raise NotImplementedError("Missing function to hide UI")
-    
-    def load(self):
-        raise NotImplementedError("Missing function to load UI")
-
-class MainUI(BaseUI):
-    def __init__(self, con:'UIController'):
-        super().__init__(con)
         
         self.hours = []
         self.patients = []
@@ -107,36 +171,51 @@ class MainUI(BaseUI):
         self.current_state:UITypes.States = "Main"
         self.frames:UITypes.Frames = {
             "Main" : FrameMainWindow(self.controller, self.root),
-            "Manager" : FrameMainManager(self.controller, self.root),
+            "Manager" : FrameManager(self.controller, self.root),
             "EditPatient" :FrameEditPatient(self.controller, self.root)
         }
         
     def load_hours(self, hours:list[Hour,]|None=None):
         """
-        Load the given hours into the current UI
+        Load the given hours into the current UI. If the current Frame
+        does not support it, it raises a RuntimeError
         """
         if hours is not None:
             self.hours = hours
         if hasattr(self.frames[self.current_state], "load_hours"):
             self.frames[self.current_state].load_hours(self.hours) # type: ignore
+        else:
+            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_hours")
             
     def load_patients(self, patients:list[Patient,]|None=None):
         """
-        Load the given patients into the current UI
+        Load the given patients into the current UI. If the current Frame
+        does not support it, it raises a RuntimeError
         """
         if patients is not None:
             self.patients = patients
         if hasattr(self.frames[self.current_state], "load_patients"):
             self.frames[self.current_state].load_patients(self.patients) # type: ignore
+        else:
+            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patients")
+            
+    def load_patient(self, patient:Patient) -> None:
+        """
+        Load the given patients into the current UI. If the current Frame
+        does not support it, it raises a RuntimeError
+        """
+        if hasattr(self.frames[self.current_state], "load_patient"):
+            self.frames[self.current_state].load_patient(patient) # type: ignore
+        else:
+            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patient")
             
     def load_frame(self, frame:UITypes.States) -> None:
+        """
+        Load a new frame as a "window"
+        """
         self.frames[self.current_state].hide()
         self.current_state = frame
         self.frames[self.current_state].load()
-        
-    def load_patient(self, patient:Patient) -> None:
-        if hasattr(self.frames[self.current_state], "load_patient"):
-            self.frames[self.current_state].load_patient(patient) # type: ignore
             
     def load(self):
         """
@@ -166,12 +245,19 @@ class MainUI(BaseUI):
         """
         self.root.destroy()
         
-class FrameMainWindow(BaseUI):
+class FrameMainWindow(BaseFrame):
+    """
+    Main "Window" Frame. 
+    Starting page of the program
+
+    Args:
+        con(UIController) : Controller for UI handling
+        root_window(tk.Tk) : parental window, in which it will be 
+            placed in
+    """
     def __init__(self, con:'UIController', root_window:tk.Tk):
-        super().__init__(con)
-        
-        self.root = root_window
-        
+        super().__init__(con, root_window)
+                
         # Constants
         # TODO: They can be moved into a config file to allow better 
         # change but who cares, it's UI ;)
@@ -356,6 +442,20 @@ class FrameMainWindow(BaseUI):
         self.controller.handle_solve_evolution()
     
     def load_hours(self, hours:list[Hour, ]) -> None:
+        """
+        Showing the hours in the time table.
+        If a hour is taken by a patient, the patient name is shown in 
+        the hour.
+        
+        As the UI does not keep track of a shared patients list, each 
+        time the patients are updated, this function needs to be called.
+
+        Args:
+            hours(list[Hour, ]): Hours, which will be loaded
+            
+        Returns:
+            None
+        """
         
         self.ls_hours:list[tk.Label] = []
         
@@ -381,15 +481,21 @@ class FrameMainWindow(BaseUI):
     def hide(self) -> None:
         self.main.place_forget()
         
-class FrameMainManager(BaseUI):
+class FrameManager(BaseFrame):
     """
-    Main Frame for the Manager "window" 
+    Frame for the Manager "window"
+    It allows the user to see all patients and edit them and/or add
+    new ones.
+    
+    Args:
+        con(UIController) : Controller for UI handling.
+        root_window(tk.Tk) : parental window in which it will be 
+            placed in.
+    
     """
     def __init__(self, con:'UIController', root_window:tk.Tk):
-        super().__init__(con)
-        
-        self.root = root_window
-        
+        super().__init__(con, root_window)
+                
         # Tkinter has some dodgy behavior so force update
         self.root.update()
         
@@ -434,6 +540,18 @@ class FrameMainManager(BaseUI):
         self.controller.handle_add_patient_ui()
 
     def scroll_ui(self, up:bool) -> None:
+        """
+        Moves the frame, in which the patients buttons are placed up 
+        and down, due to the limited window size in creates an illusion
+        of scrolling
+
+        Args:
+            up (bool): direction of scrolling
+            
+        Return:
+            None
+        """
+
         delta = 10
         if up:
             if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
@@ -453,7 +571,20 @@ class FrameMainManager(BaseUI):
 
 
     def load_patients(self, patients:list[Patient,]) -> None:
-        print('Loading patients to show')
+        """
+        Shows all given patients.
+        Each patient is shown as a button to edit, and a delete button.
+        
+        As the UI does not keep track of a shared patients list, each 
+        time the patients are updated, this function needs to be called.
+
+        Args:
+            patients(list[Patient, ]): Patients, which will be loaded
+            
+        Returns:
+            None
+        """
+        
         self.patients = patients
         # Delete old labels
         for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
@@ -491,22 +622,31 @@ class FrameMainManager(BaseUI):
         self.root.destroy()
         
     def load(self) -> None:
+        # Binding scroll wheel
         self.root.bind("<Button-4>", lambda event:self.scroll_ui(up=False))
         self.root.bind("<Button-5>", lambda event:self.scroll_ui(up=True))
         self.main.place(x=0, y=0)
         
     def hide(self) -> None:
+        # Unbinding scroll wheel
+        self.root.unbind("<Button-4>")
+        self.root.unbind("<Button-5>")
         self.main.place_forget()
         
-class FrameEditPatient(BaseUI):
+class FrameEditPatient(BaseFrame):
     """
-    This UI is responsible to allow the User to edit the Hours the 
-    patient can attend to etc
+    Frame for the Edit "window"
+    It allows the user to edit a patient or add a new one
+    
+    Args:
+        con(UIController) : Controller for UI handling.
+        root_window(tk.Tk) : parental window in which it will be 
+            placed in.
+    
     """
     def __init__(self, con:'UIController', root_window:tk.Tk):
-        super().__init__(con)
-        self.root = root_window
-
+        super().__init__(con, root_window)
+        
         self.patient_name = ''
         self.pos_hours:list[int] = []
         self.patient = Patient(self.patient_name, self.pos_hours)
@@ -704,6 +844,14 @@ class FrameEditPatient(BaseUI):
                                            activebackground='green')
     
     def load_patient(self, patient:Patient) -> None:
+        """
+        Loads a patient to edit.
+        If not called the frame will assume that the user wants to 
+        create a new one.
+
+        Args:
+            patient (Patient): Patient to edit
+        """
         self.patient = patient
         self.patient_name = patient.name
         self.pos_hours = patient.pos_times
@@ -720,6 +868,11 @@ class FrameEditPatient(BaseUI):
         self.main.place(x=0, y=0)
         
     def hide(self):
+        """
+        Frame persist in the background, so after cancellation or 
+        successful creation ofd patient all data needs to be cleared
+        to not have side effects.
+        """
         self.patient_name = ''
         self.pos_hours = []
         self.patient = Patient(self.patient_name, self.pos_hours)
