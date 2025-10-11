@@ -512,16 +512,12 @@ class FrameManager(BaseFrame):
         self.window_height = self.root.winfo_height()
         self.f_patients_position = [10, 0, 320, self.root.winfo_height()]
         
-        # List of all patients
-        self.f_patients = tk.Frame(master=self.main,
-                                   background='#2b2d30',
-                                   border=2,
-                                   relief='solid')
-        self.f_patients.place(x=10,
-                              y=0,
-                              width=320,
-                              height=self.root.winfo_height()-20)
-
+        self.sf_list_patients = SubFramePatientList(
+            self.controller,
+            self.main,
+            [])
+        self.sf_list_patients.load()
+        
         # Show options
         self.f_options = tk.Frame(master=self.main,
                                     background='#2b2d30',
@@ -551,23 +547,23 @@ class FrameManager(BaseFrame):
         Return:
             None
         """
+        self.sf_list_patients.scroll(up)
+        # delta = 10
+        # if up:
+        #     if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
+        #         self.f_patients_position[1] -= delta
+        #     else:
+        #         self.f_patients_position[1] = self.window_height - self.f_patients_position[3]
+        # else:
+        #     if self.f_patients_position[1] > -delta -10:
+        #         self.f_patients_position[1] = 0
+        #     else:
+        #         self.f_patients_position[1] += delta
 
-        delta = 10
-        if up:
-            if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
-                self.f_patients_position[1] -= delta
-            else:
-                self.f_patients_position[1] = self.window_height - self.f_patients_position[3]
-        else:
-            if self.f_patients_position[1] > -delta -10:
-                self.f_patients_position[1] = 0
-            else:
-                self.f_patients_position[1] += delta
-
-        self.f_patients.place(x=self.f_patients_position[0],
-                              y=self.f_patients_position[1],
-                              width=self.f_patients_position[2],
-                              height=self.f_patients_position[3])
+        # self.f_patients.place(x=self.f_patients_position[0],
+        #                       y=self.f_patients_position[1],
+        #                       width=self.f_patients_position[2],
+        #                       height=self.f_patients_position[3])
 
 
     def load_patients(self, patients:list[Patient,]) -> None:
@@ -584,33 +580,7 @@ class FrameManager(BaseFrame):
         Returns:
             None
         """
-        
-        self.patients = patients
-        # Delete old labels
-        for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
-            b_patient.destroy()
-            b_delete.destroy()
-        self.bs_patients = []
-        self.bs_deletion = []
-        
-        
-        count_patients = len(patients)
-        self.f_patients_position[3] = max(count_patients*25 + 10, self.root.winfo_height())
-
-        for index, patient in enumerate(patients):
-            self.bs_patients.append(tk.Button(master=self.f_patients,
-                                             background='#ACAB00',
-                                             foreground='#000000',
-                                             text=patient.name,
-                                             command=lambda i=index : self.call_edit_patient(i)))
-            self.bs_patients[-1].place(x=10, y=25*index+5, width=270, height=20)
-            
-            self.bs_deletion.append(tk.Button(master=self.f_patients,
-                                              background="#C00812",
-                                              foreground='#081505',
-                                              text="X",
-                                              command=lambda i=index : self.call_patient_deletion(i)))
-            self.bs_deletion[-1].place(x=290, y=25*index+5, width=20, height=20)
+        self.sf_list_patients.load_patients(patients)
             
     def call_patient_deletion(self, index:int) -> None:
         self.controller.handle_call_delete_patient(index)
@@ -881,3 +851,116 @@ class FrameEditPatient(BaseFrame):
         for button in self.bs_hours:
             button.configure(background='red')
         self.main.place_forget()
+
+class SubFramePatientList(BaseFrame):
+    """
+    Sub frame for scrolling thought the patients.
+    Args:
+        con(UIController): Controller for UI handling
+        root_window(tk.Tk) : parental window in which it will be 
+            placed in.
+    """
+    def __init__(self,
+                 con:'UIController',
+                 root_window:tk.Tk|tk.Frame,
+                 patients:list[Patient,]):
+        
+        super().__init__(con, root_window)
+        
+        self.patients = patients
+        self.bs_deletion = []
+        self.bs_patients = []
+        
+        self.root.update()
+        
+        # Main Frame
+        self.main = tk.Frame(master=self.root,
+                             bg='#2b2d30',
+                             border=2,
+                             relief="solid",
+                             width=320,
+                             height=600)
+        
+        # Scrollable
+        self.scrollable = tk.Frame(master=self.main,
+                                   bg="#2B2D30",
+                                   border=2,
+                                   relief="solid",
+                                   width=316)
+        self.scrollable.place(x=0, y=2)
+        
+    def scroll(self, up:bool) -> None:
+        delta = 25
+        self.root.update()
+        loc_height = self.scrollable.winfo_height()
+        main_height = self.main.winfo_height()
+        old_y = self.scrollable.winfo_y()
+        dir = -delta if up else delta
+        test_y = old_y + dir
+        if loc_height - main_height <= 0:
+            # Scrollable Window is smaller than parent, no need for scrolling
+            return
+        elif test_y > 0:
+            # Upper stop
+            new_y = 0
+        elif main_height - test_y > loc_height:
+            # Lower Stop
+            new_y = main_height - loc_height
+        else:
+            new_y = test_y
+            
+        self.scrollable.place_configure(y=new_y)
+        
+    def load(self):
+        self.main.place(x=10, y=10)
+        
+    def load_patients(self, patients:list[Patient,]) -> None:
+        """
+        Shows all given patients.
+        Each patient is shown as a button to edit, and a delete button.
+        
+        As the UI does not keep track of a shared patients list, each 
+        time the patients are updated, this function needs to be called.
+
+        Args:
+            patients(list[Patient, ]): Patients, which will be loaded
+            
+        Returns:
+            None
+        """
+        
+        self.patients = patients
+        # Delete old labels
+        for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
+            b_patient.destroy()
+            b_delete.destroy()
+        self.bs_patients = []
+        self.bs_deletion = []
+        
+        # Adjust scrollable height 
+        self.root.update()
+        print(self.scrollable.winfo_height())
+        self.scrollable.place_configure(height=5 + len(patients)*25 + 5)
+        self.root.update()
+        print(self.scrollable.winfo_height())
+        
+        for index, patient in enumerate(patients):
+            self.bs_patients.append(tk.Button(master=self.scrollable,
+                                             background='#ACAB00',
+                                             foreground='#000000',
+                                             text=patient.name,
+                                             command=lambda i=index : self.call_edit_patient(i)))
+            self.bs_patients[-1].place(x=10, y=25*index+5, width=270, height=20)
+            
+            self.bs_deletion.append(tk.Button(master=self.scrollable,
+                                              background="#C00812",
+                                              foreground='#081505',
+                                              text="X",
+                                              command=lambda i=index : self.call_patient_deletion(i)))
+            self.bs_deletion[-1].place(x=290, y=25*index+5, width=20, height=20)
+            
+    def call_patient_deletion(self, index:int) -> None:
+        pass
+    
+    def call_edit_patient(self, index:int) -> None:
+        pass
