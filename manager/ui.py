@@ -655,135 +655,16 @@ class FrameEditPatient(BaseFrame):
         self.patient = Patient(self.patient_name, self.pos_hours)
         self.week = Week()
         
-        # Constants
-        self.DAY_WIDTH = 170
-        self.TIME_SPACING = 40
-        self.PX_PER_HOUR = int(self.TIME_SPACING + 10)
-        
-        self.DAYS:UITypes.Days = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday"
-        ]
-        self.TIMES:UITypes.Times = [
-            "0700",
-            "0800",
-            "0900",
-            "1000",
-            "1100",
-            "1200",
-            "1300",
-            "1400",
-            "1500",
-            "1600",
-            "1700",
-            "1800",
-            "1900"
-        ]
-        self.POS_CONSTANTS:UITypes.PosConstants = \
-            {
-                "Day" : \
-                    {
-                        "width" : 160,
-                        "height" : 40
-                    },
-                "Time" : \
-                    {
-                        "width" : 80,
-                        "height" : 30,
-                        "px_per_hour" : 40
-                    }
-            }
-        self.POSITIONS:UITypes.Positions = {
-            "Day" : {
-                
-                "Monday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20,
-                            20),
-                "Tuesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + self.POS_CONSTANTS["Day"]["width"]+20,
-                             20),
-                "Wednesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*2,
-                               20),
-                "Thursday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*3,
-                              20),
-                "Friday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*4,
-                            20)
-            },
-            "Time" : {
-                "0700" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20),
-                "0800" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + self.POS_CONSTANTS["Time"]["height"]+10),
-                "0900" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*2),
-                "1000" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*3),
-                "1100" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*4),
-                "1200" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*5),
-                "1300" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*6),
-                "1400" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*7),
-                "1500" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*8),
-                "1600" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*9),
-                "1700" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*10),
-                "1800" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*11),
-                "1900" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*12),
-            }
-        }
-        
         # Main Frame
         self.main = tk.Frame(master=self.root,
                              background="#1F1F1F",
                              width=self.root.winfo_width(),
-                             height=self.root.winfo_height()
-                             )
-        # Frame Time
-        self.f_time_table = tk.Frame(master=self.main,
-                                     background='#333333',
-                                     relief='ridge',
-                                     border=2,
-                                     cursor='arrow')
-        self.f_time_table.place(x=10,
-                                y=10,
-                                width= 20 + self.POS_CONSTANTS["Time"]["width"] + 20 
-                                       + 5*(self.POS_CONSTANTS["Day"]["width"] + 20),
-                                height= 20 + self.POS_CONSTANTS["Day"]["height"] + 20 
-                                        + 13*(self.POS_CONSTANTS["Time"]["height"] + 10))
+                             height=self.root.winfo_height())        
         
-        # Labels Day
-        self.ls_day : list[tk.Label] = []
-        for day in self.DAYS:
-            self.ls_day.append(tk.Label(master=self.f_time_table,
-                                        background="#11515C",
-                                        foreground='#F0F0F0',
-                                        font='Aral, 18',
-                                        text=day))
-            self.ls_day[-1].place(x=self.POSITIONS["Day"][day][0],
-                                  y=self.POSITIONS["Day"][day][1],
-                                  width=self.POS_CONSTANTS['Day']["width"],
-                                  height=self.POS_CONSTANTS['Day']["height"])
-        
-        # Labels Time
-        self.ls_time: list[tk.Label,] = []
-        
-        for time in self.TIMES:
-            self.ls_time.append(tk.Label(master=self.f_time_table,
-                                         background='#11515C',
-                                         foreground='#F0F0F0',
-                                         text=time[:2] + ':' + time[2:]))
-            self.ls_time[-1].place(x=self.POSITIONS["Time"][time][0],
-                                   y=self.POSITIONS["Time"][time][1],
-                                   width=self.POS_CONSTANTS['Time']["width"],
-                                   height=self.POS_CONSTANTS['Time']["height"])
+        # Time Table
+        self.sf_time_table = SubFrameTimeTable(self.controller,
+                                               self.main)
+        self.sf_time_table.load()
         
         # Input name
         self.frame_config = tk.Frame(master=self.main,
@@ -812,21 +693,16 @@ class FrameEditPatient(BaseFrame):
         self.bs_hours:list[tk.Button] = []
         
         for index, hour in enumerate(self.week.hours):
-            day_index = hour.ID >> 4
-            day = self.DAYS[day_index]
             colour = "green" if hour.ID in self.patient.pos_times else "red"
-            self.bs_hours.append(tk.Button(master =self.f_time_table,
+            self.bs_hours.append(tk.Button(master=self.sf_time_table.main,
                                           background=colour,
                                           foreground='#F0F0F0',
                                           relief='ridge',
                                           text='' if hour.taken_by is None else hour.taken_by.name,
                                           command=lambda i=index : self.add_hour_to_pos_hours(i)))
                                           #text=f'{hour.time} // {hour.duration}'))
-            self.bs_hours[-1].place(x=self.POSITIONS["Day"][day][0],
-                                    y=self.POSITIONS["Time"][hour.time[:2]+ '00'][1]
-                                      +self.POS_CONSTANTS["Time"]["px_per_hour"]*int(hour.time[2:])/60,
-                                    width=self.POS_CONSTANTS["Day"]["width"],
-                                    height=self.POS_CONSTANTS["Time"]["px_per_hour"] * hour.duration/60)
+        self.sf_time_table.place_hours(self.bs_hours, self.week)
+            
         
     def call_confirm(self):
         self.controller.handle_call_confirm_edit_patient(
@@ -1041,6 +917,153 @@ class SubFrameCalculatingSolution(BaseFrame):
         
     def load(self):
         self.main.place(x=self.width//3, y=self.height//3)
+        
+    def hide(self):
+        self.main.place_forget()
+        
+class SubFrameTimeTable(BaseFrame):
+    """
+    Frame for showing the Time structure
+    """
+    def __init__(self, con:'UIController', root_window:tk.Tk|tk.Frame):
+        super().__init__(con, root_window)
+        
+        # Constants
+        self.DAY_WIDTH = 170
+        self.TIME_SPACING = 40
+        self.PX_PER_HOUR = int(self.TIME_SPACING + 10)
+        
+        self.DAYS:UITypes.Days = [
+            "Monday",
+            "Tuesday",
+            "Wednesday",
+            "Thursday",
+            "Friday"
+        ]
+        self.TIMES:UITypes.Times = [
+            "0700",
+            "0800",
+            "0900",
+            "1000",
+            "1100",
+            "1200",
+            "1300",
+            "1400",
+            "1500",
+            "1600",
+            "1700",
+            "1800",
+            "1900"
+        ]
+        self.POS_CONSTANTS:UITypes.PosConstants = \
+            {
+                "Day" : \
+                    {
+                        "width" : 160,
+                        "height" : 40
+                    },
+                "Time" : \
+                    {
+                        "width" : 80,
+                        "height" : 30,
+                        "px_per_hour" : 40
+                    }
+            }
+        self.POSITIONS:UITypes.Positions = {
+            "Day" : {
+                
+                "Monday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20,
+                            20),
+                "Tuesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + self.POS_CONSTANTS["Day"]["width"]+20,
+                             20),
+                "Wednesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*2,
+                               20),
+                "Thursday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*3,
+                              20),
+                "Friday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*4,
+                            20)
+            },
+            "Time" : {
+                "0700" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20),
+                "0800" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + self.POS_CONSTANTS["Time"]["height"]+10),
+                "0900" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*2),
+                "1000" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*3),
+                "1100" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*4),
+                "1200" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*5),
+                "1300" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*6),
+                "1400" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*7),
+                "1500" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*8),
+                "1600" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*9),
+                "1700" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*10),
+                "1800" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*11),
+                "1900" : (20,
+                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*12),
+            }
+        }
+        
+        # Main Frame
+        self.main = tk.Frame(master=self.root,
+                             background='#333333',
+                             relief='ridge',
+                             border=2,
+                             cursor='arrow',
+                             height=20 + self.POS_CONSTANTS["Day"]["height"] + 20 
+                                    + 13*(self.POS_CONSTANTS["Time"]["height"] + 10),
+                             width=20 + self.POS_CONSTANTS["Time"]["width"] + 20 
+                                   + 5*(self.POS_CONSTANTS["Day"]["width"] + 20))
+        
+        # Labels Day
+        self.ls_day : list[tk.Label] = []
+        for day in self.DAYS:
+            self.ls_day.append(tk.Label(master=self.main,
+                                        background="#11515C",
+                                        foreground='#F0F0F0',
+                                        font='Aral, 18',
+                                        text=day))
+            self.ls_day[-1].place(x=self.POSITIONS["Day"][day][0],
+                                  y=self.POSITIONS["Day"][day][1],
+                                  width=self.POS_CONSTANTS['Day']["width"],
+                                  height=self.POS_CONSTANTS['Day']["height"])
+        
+        # Labels Time
+        self.ls_time: list[tk.Label,] = []
+        
+        for time in self.TIMES:
+            self.ls_time.append(tk.Label(master=self.main,
+                                         background='#11515C',
+                                         foreground='#F0F0F0',
+                                         text=time[:2] + ':' + time[2:]))
+            self.ls_time[-1].place(x=self.POSITIONS["Time"][time][0],
+                                   y=self.POSITIONS["Time"][time][1],
+                                   width=self.POS_CONSTANTS['Time']["width"],
+                                   height=self.POS_CONSTANTS['Time']["height"])
+            
+    def place_hours(self, placeables, week):
+        for placeable, hour in zip(placeables, week.hours):
+            day_index = hour.ID >> 4
+            day = self.DAYS[day_index]
+            placeable.place(
+                x=self.POSITIONS["Day"][day][0],
+                y=self.POSITIONS["Time"][hour.time[:2]+ '00'][1]
+                  +self.POS_CONSTANTS["Time"]["px_per_hour"]*int(hour.time[2:])/60,
+                width=self.POS_CONSTANTS["Day"]["width"],
+                height=self.POS_CONSTANTS["Time"]["px_per_hour"] * hour.duration/60
+                )
+            
+    def load(self):
+        self.main.place(x=10, y=10)
         
     def hide(self):
         self.main.place_forget()
