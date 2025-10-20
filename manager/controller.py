@@ -42,7 +42,8 @@ class Controller:
         self.week = self.find_solution.all_solutions()[0]
         
     def solve_evolution(self):
-        self.week = self.find_solution.evo_solution()
+        # self.week = self.find_solution.evo_solution()
+        self.find_solution.evo_solution()
     
     def close(self) -> None:
         print('Closing a controller instance')

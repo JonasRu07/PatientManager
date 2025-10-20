@@ -140,7 +140,19 @@ class BaseFrame:
     
     def load(self) -> None:
         raise UIMissingMethod("Missing function to load UI")
-
+    
+    def deactivate(self) -> None:
+        """
+        Deactivates the User Input for this frame
+        """
+        pass
+    
+    def activate(self) -> None:
+        """
+        Deactivates the User Input for this frame
+        """
+        pass
+       
 class MainUI:
     """
     Main proper window for the whole application.
@@ -174,6 +186,12 @@ class MainUI:
             "Manager" : FrameManager(self.controller, self.root),
             "EditPatient" :FrameEditPatient(self.controller, self.root)
         }
+    
+    def progress_bar(self, progress:float):
+        assert not progress < 0, "Progress cannot be smaller 0"
+        assert not progress > 1, "Progress cannot exceed 1"
+        if hasattr(self.frames[self.current_state], "set_progress"):
+            self.frames[self.current_state].set_progress(progress) #type: ignore
         
     def load_hours(self, hours:list[Hour,]|None=None):
         """
@@ -217,6 +235,12 @@ class MainUI:
         self.current_state = frame
         self.frames[self.current_state].load()
             
+    def deactivate(self):
+        self.frames[self.current_state].deactivate()
+        
+    def activate(self):
+        self.frames[self.current_state].activate()
+            
     def load(self):
         """
         Start of the internal logic of the UI
@@ -244,6 +268,12 @@ class MainUI:
         Close all windows
         """
         self.root.destroy()
+        
+    def show_calc_frame(self):
+        self.frames[self.current_state].show_calc_frame() #type: ignore
+        
+    def hide_calc_frame(self):
+        self.frames[self.current_state].hide_calc_frame() #type: ignore
         
 class FrameMainWindow(BaseFrame):
     """
@@ -406,20 +436,20 @@ class FrameMainWindow(BaseFrame):
         self.b_solve_define.place(x=20, y=20, width=160, height=50)
         
         # Button Solve recursive
-        self.b_solve_define = tk.Button(master=self.f_interaction,
-                                        background='#11515C',
-                                        foreground='#F0F0F0',
-                                        text='Find all \nanswers',
-                                        command=self.call_solve_recursive)
-        self.b_solve_define.place(x=20, y=80, width=160, height=50)
+        self.b_solve_recursive = tk.Button(master=self.f_interaction,
+                                           background='#11515C',
+                                           foreground='#F0F0F0',
+                                           text='Find all \nanswers',
+                                           command=self.call_solve_recursive)
+        self.b_solve_recursive.place(x=20, y=80, width=160, height=50)
         
         # Button Solve Evolution
-        self.b_solve_define = tk.Button(master=self.f_interaction,
-                                        background='#11515C',
-                                        foreground='#F0F0F0',
-                                        text='Find evo \nanswers',
-                                        command=self.call_solve_evolution)
-        self.b_solve_define.place(x=20, y=140, width=160, height=50)
+        self.b_solve_evolution = tk.Button(master=self.f_interaction,
+                                           background='#11515C',
+                                           foreground='#F0F0F0',
+                                           text='Find evo \nanswers',
+                                           command=self.call_solve_evolution)
+        self.b_solve_evolution.place(x=20, y=140, width=160, height=50)
         
         # Button Patient manager
         self.b_patient_managing = tk.Button(master=self.f_interaction,
@@ -473,6 +503,34 @@ class FrameMainWindow(BaseFrame):
                                       +self.POS_CONSTANTS["Time"]["px_per_hour"]*int(hour.time[2:])/60,
                                     width=self.POS_CONSTANTS["Day"]["width"],
                                     height=self.POS_CONSTANTS["Time"]["px_per_hour"] * hour.duration / 60)
+        
+    def show_calc_frame(self):
+        self.sf_calc_frame = SubFrameCalculatingSolution(self.controller, self.main)
+        self.sf_calc_frame.load()
+        
+    def hide_calc_frame(self):
+        if self.sf_calc_frame is not None:
+            self.sf_calc_frame.main.destroy()
+            self.sf_calc_frame = None
+        
+    def set_progress(self, value:float):
+        value = int(value*100)
+        if self.sf_calc_frame is not None:
+            self.sf_calc_frame.progress.set(value)
+        else:
+            raise RuntimeError("Cannot increase progress of None Frame")
+        
+    def deactivate(self) -> None:
+        self.b_patient_managing.configure(state="disabled")
+        self.b_solve_define.configure(state="disabled")
+        self.b_solve_recursive.configure(state="disabled")
+        self.b_solve_evolution.configure(state="disabled")
+        
+    def activate(self) -> None:
+        self.b_patient_managing.configure(state="normal")
+        self.b_solve_define.configure(state="normal")
+        self.b_solve_recursive.configure(state="normal")
+        self.b_solve_evolution.configure(state="normal")
         
     def load(self,) -> None:
         print("Placing Main")
@@ -914,10 +972,8 @@ class SubFramePatientList(BaseFrame):
         
         # Adjust scrollable height 
         self.root.update()
-        print(self.scrollable.winfo_height())
         self.scrollable.place_configure(height=5 + len(patients)*25 + 5)
         self.root.update()
-        print(self.scrollable.winfo_height())
         
         for index, patient in enumerate(patients):
             self.bs_patients.append(tk.Button(master=self.scrollable,
@@ -939,3 +995,52 @@ class SubFramePatientList(BaseFrame):
 
     def call_edit_patient(self, index:int) -> None:
         self.controller.handle_edit_patient_ui(index)
+        
+class SubFrameCalculatingSolution(BaseFrame):
+    """
+    Frame for showing the User, that the program is currently running
+    the calculation for the clicked solution and not just stuck.
+
+    Args:
+        con(UIController): Controller for UI handling
+        root_window(tk.Tk) : parental window in which it will be 
+            placed in.
+    """
+    def __init__(self, con:'UIController', root_window:tk.Tk|tk.Frame):
+        super().__init__(con, root_window)
+        
+        # Tkinter has some dodgy behavior so force update
+        self.root.update()
+        self.height = self.root.winfo_height()
+        self.width = self.root.winfo_width()
+        # Main
+        self.main = tk.Frame(master=self.root,
+                             bg="grey",
+                             height=self.height // 3,
+                             width=self.width // 3,
+                             border=10,
+                             relief="groove")
+        
+        # Calc Explanation
+        self.l_text = tk.Label(master=self.main,
+                               background="#4A0215",
+                               foreground="#F0F0F0",
+                               font=("Aral, 16"),
+                               text="Calculating Solutions")
+        self.l_text.place(x=30, y=40, height=40, width=self.width//3 - 80)
+        
+        # Progress
+        self.progress = tk.IntVar()        
+        self.progress_bar = ttk.Progressbar(master=self.main,
+                                            orient="horizontal",
+                                            length=max(0, self.width//3-80),
+                                            maximum=100.1, # Increase by .1 to prevent floating point stuff
+                                            variable=self.progress)
+        
+        self.progress_bar.place(x=30, y=100, height=30)
+        
+    def load(self):
+        self.main.place(x=self.width//3, y=self.height//3)
+        
+    def hide(self):
+        self.main.place_forget()
