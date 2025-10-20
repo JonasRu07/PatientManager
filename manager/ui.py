@@ -200,8 +200,11 @@ class MainUI:
         """
         if hours is not None:
             self.hours = hours
-        if hasattr(self.frames[self.current_state], "load_hours"):
-            self.frames[self.current_state].load_hours(self.hours) # type: ignore
+        # Ignoring type warning, because the code make sure that it has
+        # the fucking function, but VSCode is too stupid to realize that
+        func = getattr(self.frames[self.current_state], "load_hours", None)
+        if callable(func):
+            self.frames[self.current_state].load_hours(self.hours) # type:ignore
         else:
             raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_hours")
             
@@ -212,20 +215,46 @@ class MainUI:
         """
         if patients is not None:
             self.patients = patients
-        if hasattr(self.frames[self.current_state], "load_patients"):
-            self.frames[self.current_state].load_patients(self.patients) # type: ignore
+        
+        # Ignoring type warning, because the code make sure that it has
+        # the fucking function, but VSCode is too stupid to realize that
+        func = getattr(self.frames[self.current_state], "load_patients", None)
+        if callable(func):
+            self.frames[self.current_state].load_patients(self.patients) # type:ignore
         else:
             raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patients")
+
             
     def load_patient(self, patient:Patient) -> None:
         """
         Load the given patients into the current UI. If the current Frame
         does not support it, it raises a RuntimeError
         """
-        if hasattr(self.frames[self.current_state], "load_patient"):
-            self.frames[self.current_state].load_patient(patient) # type: ignore
+        # Ignoring type warning, because the code make sure that it has
+        # the fucking function, but VSCode is too stupid to realize that
+        func = getattr(self.frames[self.current_state], "load_patient", None)
+        if callable(func):
+            self.frames[self.current_state].load_patient(patient) # type:ignore
         else:
             raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patient")
+
+    def show_calc_frame(self):
+        # Ignoring type warning, because the code make sure that it has
+        # the fucking function, but VSCode is too stupid to realize that
+        func = getattr(self.frames[self.current_state], "show_calc_frame", None)
+        if callable(func):
+            self.frames[self.current_state].show_calc_frame() # type:ignore
+        else:
+            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method show_calc_frame")
+        
+    def hide_calc_frame(self):
+        # Ignoring type warning, because the code make sure that it has
+        # the fucking function, but VSCode is too stupid to realize that
+        func = getattr(self.frames[self.current_state], "hide_calc_frame", None)
+        if callable(func):
+            self.frames[self.current_state].hide_calc_frame() # type:ignore
+        else:
+            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method hide_calc_frame")
             
     def load_frame(self, frame:UITypes.States) -> None:
         """
@@ -268,12 +297,6 @@ class MainUI:
         Close all windows
         """
         self.root.destroy()
-        
-    def show_calc_frame(self):
-        self.frames[self.current_state].show_calc_frame() #type: ignore
-        
-    def hide_calc_frame(self):
-        self.frames[self.current_state].hide_calc_frame() #type: ignore
         
 class FrameMainWindow(BaseFrame):
     """
