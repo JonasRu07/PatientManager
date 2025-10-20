@@ -288,88 +288,7 @@ class FrameMainWindow(BaseFrame):
     def __init__(self, con:'UIController', root_window:tk.Tk):
         super().__init__(con, root_window)
                 
-        # Constants
-        # TODO: They can be moved into a config file to allow better 
-        # change but who cares, it's UI ;)
-        self.DAYS:UITypes.Days = [
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday"
-        ]
-        self.TIMES:UITypes.Times = [
-            "0700",
-            "0800",
-            "0900",
-            "1000",
-            "1100",
-            "1200",
-            "1300",
-            "1400",
-            "1500",
-            "1600",
-            "1700",
-            "1800",
-            "1900"
-        ]
-        self.POS_CONSTANTS:UITypes.PosConstants = \
-            {
-                "Day" : \
-                    {
-                        "width" : 160,
-                        "height" : 40
-                    },
-                "Time" : \
-                    {
-                        "width" : 80,
-                        "height" : 30,
-                        "px_per_hour" : 40
-                    }
-            }
-        self.POSITIONS:UITypes.Positions = {
-            "Day" : {
-                
-                "Monday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20,
-                            20),
-                "Tuesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + self.POS_CONSTANTS["Day"]["width"]+20,
-                             20),
-                "Wednesday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*2,
-                               20),
-                "Thursday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*3,
-                              20),
-                "Friday" : (20 + self.POS_CONSTANTS["Time"]["width"] + 20 + (self.POS_CONSTANTS["Day"]["width"]+20)*4,
-                            20)
-            },
-            "Time" : {
-                "0700" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20),
-                "0800" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + self.POS_CONSTANTS["Time"]["height"]+10),
-                "0900" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*2),
-                "1000" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*3),
-                "1100" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*4),
-                "1200" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*5),
-                "1300" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*6),
-                "1400" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*7),
-                "1500" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*8),
-                "1600" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*9),
-                "1700" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*10),
-                "1800" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*11),
-                "1900" : (20,
-                          20 + self.POS_CONSTANTS["Day"]["height"] + 20 + (self.POS_CONSTANTS["Time"]["height"]+10)*12),
-            }
-        }
+        
         # Tkinter has some dodgy behavior so force update
         self.root.update()
         
@@ -379,41 +298,10 @@ class FrameMainWindow(BaseFrame):
                              width=self.root.winfo_width(),
                              height=self.root.winfo_height())
         
-        # Frame Time
-        width = 20 + self.POS_CONSTANTS["Time"]["width"] + 20 + 5*(self.POS_CONSTANTS["Day"]["width"] + 20)
-        height =20 + self.POS_CONSTANTS["Day"]["height"] + 20 + 13*(self.POS_CONSTANTS["Time"]["height"] + 10)
-        self.f_time_table = tk.Frame(master=self.main,
-                                     background='#333333',
-                                     relief='ridge',
-                                     border=2,
-                                     cursor='arrow')
-        self.f_time_table.place(x=10, y=10, width=width, height=height)
-        
-        # Labels Day
-        self.ls_day : list[tk.Label] = []
-        for day in self.DAYS:
-            self.ls_day.append(tk.Label(master=self.f_time_table,
-                                        background="#11515C",
-                                        foreground='#F0F0F0',
-                                        font='Aral, 18',
-                                        text=day))
-            self.ls_day[-1].place(x=self.POSITIONS["Day"][day][0],
-                                  y=self.POSITIONS["Day"][day][1],
-                                  width=self.POS_CONSTANTS['Day']["width"],
-                                  height=self.POS_CONSTANTS['Day']["height"])
-        
-        # Labels Time
-        self.ls_time: list[tk.Label,] = []
-        
-        for time in self.TIMES:
-            self.ls_time.append(tk.Label(master=self.f_time_table,
-                                         background='#11515C',
-                                         foreground='#F0F0F0',
-                                         text=time[:2] + ':' + time[2:]))
-            self.ls_time[-1].place(x=self.POSITIONS["Time"][time][0],
-                                   y=self.POSITIONS["Time"][time][1],
-                                   width=self.POS_CONSTANTS['Time']["width"],
-                                   height=self.POS_CONSTANTS['Time']["height"])
+        # Time Table
+        self.sf_time_table = SubFrameTimeTable(self.controller,
+                                               self.main)
+        self.sf_time_table.load()
         
         # Frame User Interaction
         self.f_interaction = tk.Frame(master=self.main,
@@ -421,8 +309,7 @@ class FrameMainWindow(BaseFrame):
                                      border=2,
                                      cursor='arrow',
                                      relief='ridge')
-        self.f_interaction.place(x=10 + 20 + self.POS_CONSTANTS["Time"]["width"] 
-                                   + 20 + 5*(self.POS_CONSTANTS["Day"]["width"] + 20) + 10,
+        self.f_interaction.place(x=1040,
                                  y=10,
                                  width=200,
                                  height=600)
@@ -490,19 +377,13 @@ class FrameMainWindow(BaseFrame):
         self.ls_hours:list[tk.Label] = []
         
         for hour in hours:
-            day_index = hour.ID >> 4
-            day = self.DAYS[day_index]
-            self.ls_hours.append(tk.Label(master =self.f_time_table,
+            self.ls_hours.append(tk.Label(master =self.sf_time_table.main,
                                           background='#424242',
                                           foreground='#F0F0F0',
                                           relief='ridge',
                                           text='' if hour.taken_by is None else hour.taken_by.name))
                                           #text=f'{hour.time} // {hour.duration}'))
-            self.ls_hours[-1].place(x=self.POSITIONS["Day"][day][0],
-                                    y=self.POSITIONS["Time"][hour.time[:2]+ '00'][1]
-                                      +self.POS_CONSTANTS["Time"]["px_per_hour"]*int(hour.time[2:])/60,
-                                    width=self.POS_CONSTANTS["Day"]["width"],
-                                    height=self.POS_CONSTANTS["Time"]["px_per_hour"] * hour.duration / 60)
+        self.sf_time_table.place_hours(self.ls_hours, hours) # type: ignore -> idk why it complains
         
     def show_calc_frame(self):
         self.sf_calc_frame = SubFrameCalculatingSolution(self.controller, self.main)
@@ -701,7 +582,7 @@ class FrameEditPatient(BaseFrame):
                                           text='' if hour.taken_by is None else hour.taken_by.name,
                                           command=lambda i=index : self.add_hour_to_pos_hours(i)))
                                           #text=f'{hour.time} // {hour.duration}'))
-        self.sf_time_table.place_hours(self.bs_hours, self.week)
+        self.sf_time_table.place_hours(self.bs_hours, self.week.hours) # type:  ignore -> Idk why it complains
             
         
     def call_confirm(self):
@@ -1050,8 +931,10 @@ class SubFrameTimeTable(BaseFrame):
                                    width=self.POS_CONSTANTS['Time']["width"],
                                    height=self.POS_CONSTANTS['Time']["height"])
             
-    def place_hours(self, placeables, week):
-        for placeable, hour in zip(placeables, week.hours):
+    def place_hours(self, placeables:list[tk.Label|tk.Button],
+                    hours:list[Hour,]):
+        
+        for placeable, hour in zip(placeables, hours):
             day_index = hour.ID >> 4
             day = self.DAYS[day_index]
             placeable.place(
