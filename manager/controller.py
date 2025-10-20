@@ -29,10 +29,8 @@ class Controller:
         if old_patient.name == '':
             self.add_patient(new_patient)
         else:
-            index = self.patient_manager.patients.index(old_patient)
-            self.patient_manager.patients = (self.patient_manager.patients[:index]
-                                             + [new_patient]
-                                             + self.patient_manager.patients[index+1:])
+            self.patient_manager.delete_patient(old_patient)
+            self.patient_manager.add_patient(new_patient)
         
     def solve_define_answers(self) -> None:
         self.week = self.find_solution.define_answers()

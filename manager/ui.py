@@ -502,15 +502,11 @@ class FrameManager(BaseFrame):
         # Main Frame
         self.main = tk.Frame(master=self.root,
                              background="#1F1F1F",
-                            #  background="red",
                              width=self.root.winfo_width(),
                              height=self.root.winfo_height())
         
         self.bs_patients:list[tk.Button] = []
         self.bs_deletion:list[tk.Button] = []
-
-        self.window_height = self.root.winfo_height()
-        self.f_patients_position = [10, 0, 320, self.root.winfo_height()]
         
         self.sf_list_patients = SubFramePatientList(
             self.controller,
@@ -548,23 +544,6 @@ class FrameManager(BaseFrame):
             None
         """
         self.sf_list_patients.scroll(up)
-        # delta = 10
-        # if up:
-        #     if self.f_patients_position[1] + self.f_patients_position[3] - delta > self.window_height:
-        #         self.f_patients_position[1] -= delta
-        #     else:
-        #         self.f_patients_position[1] = self.window_height - self.f_patients_position[3]
-        # else:
-        #     if self.f_patients_position[1] > -delta -10:
-        #         self.f_patients_position[1] = 0
-        #     else:
-        #         self.f_patients_position[1] += delta
-
-        # self.f_patients.place(x=self.f_patients_position[0],
-        #                       y=self.f_patients_position[1],
-        #                       width=self.f_patients_position[2],
-        #                       height=self.f_patients_position[3])
-
 
     def load_patients(self, patients:list[Patient,]) -> None:
         """
@@ -581,20 +560,16 @@ class FrameManager(BaseFrame):
             None
         """
         self.sf_list_patients.load_patients(patients)
-            
-    def call_patient_deletion(self, index:int) -> None:
-        self.controller.handle_call_delete_patient(index)
-    
-    def call_edit_patient(self, index:int) -> None:
-        self.controller.handle_edit_patient_ui(index)
-        
+
     def destroy(self) -> None:
         self.root.destroy()
         
     def load(self) -> None:
         # Binding scroll wheel
-        self.root.bind("<Button-4>", lambda event:self.scroll_ui(up=False))
-        self.root.bind("<Button-5>", lambda event:self.scroll_ui(up=True))
+        self.root.bind("<Button-4>", lambda event:
+            self.sf_list_patients.scroll(up=False))
+        self.root.bind("<Button-5>", lambda event:
+            self.sf_list_patients.scroll(up=True))
         self.main.place(x=0, y=0)
         
     def hide(self) -> None:
@@ -625,7 +600,7 @@ class FrameEditPatient(BaseFrame):
         # Constants
         self.DAY_WIDTH = 170
         self.TIME_SPACING = 40
-        self.PX_PER_HOUR = int(self.TIME_SPACING + 10)        
+        self.PX_PER_HOUR = int(self.TIME_SPACING + 10)
         
         self.DAYS:UITypes.Days = [
             "Monday",
@@ -755,7 +730,7 @@ class FrameEditPatient(BaseFrame):
         # Input name
         self.frame_config = tk.Frame(master=self.main,
                                      background='#2b2d30')
-        self.frame_config.place(x=1050, y=10, width=200, height=200)
+        self.frame_config.place(x=1040, y=10, width=200, height=200)
 
         self.l_patient_name = tk.Label(master=self.frame_config,
                                        background='#24beca',
@@ -958,9 +933,9 @@ class SubFramePatientList(BaseFrame):
                                               text="X",
                                               command=lambda i=index : self.call_patient_deletion(i)))
             self.bs_deletion[-1].place(x=290, y=25*index+5, width=20, height=20)
-            
+        
     def call_patient_deletion(self, index:int) -> None:
-        pass
-    
+        self.controller.handle_call_delete_patient(index)
+
     def call_edit_patient(self, index:int) -> None:
-        pass
+        self.controller.handle_edit_patient_ui(index)
