@@ -30,23 +30,19 @@ class UIController:
             self.main_ui.load_hours(solutions[0].hours)
             
     def handle_solve_evolution(self) -> None:
-        # self.base_controller.solve_evolution()
-        # self.main_ui.load_hours(self.base_controller.week.hours)
         self.main_ui.show_calc_frame()
         self.main_ui.deactivate()
-        self.main_ui.root.update()
+        self.main_ui.root.update() # Tkinter is stupid
         self.base_controller.solve_evolution()
-        max_gen = self.base_controller.find_solution.evo_thread.max_gen
-        while self.base_controller.find_solution.evo_thread.is_alive():
-            current_gen = self.base_controller.find_solution.evo_thread.current_gen
+        solution_finder = self.base_controller.find_solution.evo_thread
+        max_gen = solution_finder.max_gen
+        while solution_finder.is_alive():
+            current_gen = solution_finder.current_gen
             self.main_ui.progress_bar(current_gen / max_gen)
-            self.main_ui.root.update()
-            if self.base_controller.find_solution.evo_thread.done:
-                solution = self.base_controller.find_solution.evo_thread.solution
-                self.base_controller.week = solution
-                self.base_controller.find_solution.evo_thread.stop()
+            self.main_ui.root.update() # Tkinter is stupid
+            if solution_finder.done:
+                solution_finder.stop()
                 time.sleep(0.05)
-            time.sleep(0.1)
         self.main_ui.activate()
         self.main_ui.hide_calc_frame()
         self.main_ui.load_hours(self.base_controller.week.hours)

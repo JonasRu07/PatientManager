@@ -10,16 +10,23 @@ from .patient_wrapper import PatientWrapper
 from .week import Week
 from .hour import Hour
 
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .controller import Controller
+
 class EvoThread(threading.Thread):
-    def __init__(self, pm:PatientManager, week:Week):
+    def __init__(self,
+                 pm:PatientManager,
+                 week:Week,
+                 controller:'Controller'):
+        
         super().__init__()
         self.patient_manager = pm
         self.week = week
+        self.controller = controller
         self.solution = None
         
-        self.hash = {}
-        
-        self.generations_per_iter = 100
+        self.generations_per_iter = 10
         # Too long. TODO: Do maths
         self.max_gen = self.generations_per_iter
         count_patients = len(self.patient_manager.patients)
@@ -82,6 +89,8 @@ class EvoThread(threading.Thread):
         self.done = True
         while not self.stop_event.is_set():
             time.sleep(0.05)
+            
+        self.controller.week = self.solution
         
     def stop(self):
         self.stop_event.set()
@@ -192,55 +201,12 @@ class Solver:
 
         return solutions
     
-    def evo_solution(self):
-        # T = time.time()
-        # solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
-        #                              self.week.copy())
-        # # Pulling n umber out of my ass
-        # gens_per_patient = 1000
-        
-        # current_path = []
-        # current_path_evaluation = 0
-        # best_path = []
-        # best_path_evaluation = 0
-        
-        # exp_path = 0
-        
-        # # Generating a good baseline
-        # for i in range(gens_per_patient):
-        #     exp_path += 1
-        #     current_path = solution_path.gen_path()
-        #     current_path_evaluation = solution_path.evaluate_path(current_path)
-        #     if current_path_evaluation > best_path_evaluation:
-        #         best_path_evaluation = current_path_evaluation
-        #         best_path = current_path
-
-        # # Evolving around the best path
-        # count_patients = len(self.patient_manager.patients)
-        # for depth in range(1, count_patients):
-        #     options = int((count_patients-depth)/count_patients * gens_per_patient)
-        #     for i in range(options):
-        #         exp_path += 1
-        #         current_path = solution_path.gen_path_option(best_path, start=depth)
-        #         current_path_evaluation = solution_path.evaluate_path(current_path)
-        #         if current_path_evaluation > best_path_evaluation:
-        #             best_path_evaluation = current_path_evaluation
-        #             best_path = current_path
-        #             print(f"New best evaluation = {best_path_evaluation}")
-                    
-        # print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients "
-        #       + f"with an evaluation of {best_path_evaluation}")
-        
-        # print(f"Calculation time: {time.time()-T:.2f} seconds. "
-        #       + f"{(time.time()-T)*1_000_000/exp_path:.3f} microseconds per path")
-        
-        # print(f"Explored a total of {exp_path} Paths.")
-        # return solution_path.get_week(best_path, self.week.copy())
-        
-        self.evo_thread = EvoThread(self.patient_manager, self.week)
-        print("Setup Thread complete")
+    def evo_solution(self, controller:'Controller'):        
+        self.evo_thread = EvoThread(
+            self.patient_manager,
+            self.week,
+            controller)
         self.evo_thread.start()
-        print("Run started")
     
 class SolutionPath:
     def __init__(self,
