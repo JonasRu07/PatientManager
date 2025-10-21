@@ -201,7 +201,17 @@ class Solver:
 
         return solutions
     
-    def evo_solution(self, controller:'Controller'):        
+    def evo_solution(self, controller:'Controller'):
+        """
+        Finds a "good" solution by creating different solutions and 
+        evaluating it, based on the evaluation it creates abbreviations.
+        It takes a special thread to run the calculations. After the 
+        calculations the solution will be asserted to the week of the 
+        given controller.
+        Args:
+            controller (Controller): Solution will be be asserted to 
+                the week argument
+        """
         self.evo_thread = EvoThread(
             self.patient_manager,
             self.week,
