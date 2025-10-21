@@ -34,6 +34,8 @@ Local Naming Convention:
 Raises:
     UIMissingMethod: load() from BaseFrame is not overwritten
     UIMissingMethod: hide() from BaseFrame is not overwritten
+    UIMissingFrameSupport: Current Frame does not support the used 
+        function
 
 """
 
@@ -50,6 +52,10 @@ if TYPE_CHECKING:
     from .ui_controller import UIController
 
 class UIMissingMethod(Exception):
+    def __init__(self, hint:str) -> None:
+        super().__init__(hint)
+        
+class UIMissingFrameSupport(Exception):
     def __init__(self, hint:str) -> None:
         super().__init__(hint)
 
@@ -196,7 +202,7 @@ class MainUI:
     def load_hours(self, hours:list[Hour,]|None=None):
         """
         Load the given hours into the current UI. If the current Frame
-        does not support it, it raises a RuntimeError
+        does not support it, it raises a UIMissingFrameSupport
         """
         if hours is not None:
             self.hours = hours
@@ -206,12 +212,13 @@ class MainUI:
         if callable(func):
             self.frames[self.current_state].load_hours(self.hours) # type:ignore
         else:
-            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_hours")
+            raise UIMissingFrameSupport(
+                f"Current UI-Frame {self.current_state} has no method load_hours")
             
     def load_patients(self, patients:list[Patient,]|None=None):
         """
         Load the given patients into the current UI. If the current Frame
-        does not support it, it raises a RuntimeError
+        does not support it, it raises a UIMissingFrameSupport
         """
         if patients is not None:
             self.patients = patients
@@ -222,13 +229,13 @@ class MainUI:
         if callable(func):
             self.frames[self.current_state].load_patients(self.patients) # type:ignore
         else:
-            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patients")
-
+            raise UIMissingFrameSupport(
+                f"Current UI-Frame {self.current_state} has no method load_patients")
             
     def load_patient(self, patient:Patient) -> None:
         """
         Load the given patients into the current UI. If the current Frame
-        does not support it, it raises a RuntimeError
+        does not support it, it raises a UIMissingFrameSupport
         """
         # Ignoring type warning, because the code make sure that it has
         # the fucking function, but VSCode is too stupid to realize that
@@ -236,7 +243,8 @@ class MainUI:
         if callable(func):
             self.frames[self.current_state].load_patient(patient) # type:ignore
         else:
-            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method load_patient")
+            raise UIMissingFrameSupport(
+                f"Current UI-Frame {self.current_state} has no method load_patient")
 
     def show_calc_frame(self):
         # Ignoring type warning, because the code make sure that it has
@@ -245,7 +253,8 @@ class MainUI:
         if callable(func):
             self.frames[self.current_state].show_calc_frame() # type:ignore
         else:
-            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method show_calc_frame")
+            raise UIMissingFrameSupport(
+                f"Current UI-Frame {self.current_state} has no method show_calc_frame")
         
     def hide_calc_frame(self):
         # Ignoring type warning, because the code make sure that it has
@@ -254,7 +263,8 @@ class MainUI:
         if callable(func):
             self.frames[self.current_state].hide_calc_frame() # type:ignore
         else:
-            raise RuntimeError(f"Current UI-Frame {self.current_state} has no method hide_calc_frame")
+            raise UIMissingFrameSupport(
+                f"Current UI-Frame {self.current_state} has no method hide_calc_frame")
             
     def load_frame(self, frame:UITypes.States) -> None:
         """
