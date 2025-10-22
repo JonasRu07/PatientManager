@@ -7,6 +7,7 @@ from hashlib import sha256
 from .patient import Patient
 from .patient_manager import PatientManager
 from .patient_wrapper import PatientWrapper
+from .static_io import ConstEvoParams
 from .week import Week
 from .hour import Hour
 
@@ -26,26 +27,23 @@ class EvoThread(threading.Thread):
         self.controller = controller
         self.solution = None
         
-        self.generations_per_iter = 10
-        # Too long. TODO: Do maths
-        self.max_gen = self.generations_per_iter
-        count_patients = len(self.patient_manager.patients)
-        for depth in range(1, count_patients):
-            options = int((count_patients-depth) * self.generations_per_iter)
-            for i in range(options):
-                self.max_gen += 1
-                
+        self.params = ConstEvoParams.load()
+        self.gens = self.params['num_gens']
+        self.gen_size = self.params['size_gen']
+        
+        self.max_gen = self.get_max_paths()
         self.current_gen = 0
-        
+
         self.done = False
-        self.stop_event = threading.Event()
+        self._stop_event = threading.Event()
         
-    def run(self):
+    def run(self) -> None:
+        
         print("Thread is Running")
             
         T = time.time()
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
-                                     self.week.copy())
+                                        self.week.copy())
         
         current_path = []
         current_path_evaluation = float("-inf")
@@ -53,7 +51,7 @@ class EvoThread(threading.Thread):
         best_path_evaluation = float("-inf")
         
         # Generating a good baseline
-        for i in range(self.generations_per_iter):
+        for i in range(self.gen_size):
             self.current_gen += 1
             current_path = solution_path.gen_path()
             current_path_evaluation = solution_path.evaluate_path(current_path)
@@ -65,7 +63,7 @@ class EvoThread(threading.Thread):
         # Evolving around the best path
         count_patients = len(self.patient_manager.patients)
         for depth in range(1, count_patients):
-            options = int((count_patients-depth) * self.generations_per_iter)
+            options = int((count_patients-depth) * self.gen_size)
             for i in range(options):
                 self.current_gen += 1
                 current_path = solution_path.gen_path_option(best_path, start=depth)
@@ -76,10 +74,10 @@ class EvoThread(threading.Thread):
                     print(f"New best evaluation = {best_path_evaluation}")
                     
         print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients "
-              + f"with an evaluation of {best_path_evaluation}")
+                + f"with an evaluation of {best_path_evaluation}")
         
         print(f"Calculation time: {time.time()-T:.2f} seconds. "
-              + f"{(time.time()-T)*1_000_000/self.current_gen:.3f} microseconds per path")
+                + f"{(time.time()-T)*1_000_000/self.current_gen:.3f} microseconds per path")
         
         print(f"Explored a total of {self.current_gen} Paths.")
         
@@ -87,14 +85,23 @@ class EvoThread(threading.Thread):
         
         print("Done with calculating")
         self.done = True
-        while not self.stop_event.is_set():
+        while not self._stop_event.is_set():
             time.sleep(0.05)
             
         self.controller.week = self.solution
         
+    def get_max_paths(self) -> int:
+        value = self.gen_size
+        count_patients = len(self.patient_manager.patients)
+        for depth in range(1, count_patients):
+            options = int((count_patients-depth) * self.gen_size)
+            for i in range(options):
+                value += 1
+        return value
+        
     def stop(self):
-        self.stop_event.set()
-
+        self._stop_event.set()
+        
 class Solver:
     def __init__(self, patient_manager:PatientManager, week:Week) -> None:
         self.patient_manager = patient_manager

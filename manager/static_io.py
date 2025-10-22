@@ -17,8 +17,14 @@ _dict_hours_data = TypedDict("_dict_hours_data", {"Monday" : list[_dict_day],
 _dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
                                                       "possible hours" : list[int,]})
 
-
-
+class EvoParameters(TypedDict):
+    num_gens : int
+    size_gen : int
+    reward_per_patient : int
+    reward_consecutive_hours : int
+    reward_time_limit : int
+    
+    
 class InputHours:
     @classmethod
     def load(cls, path=os.path.join("manager", "config", "hours.json")) -> list[Hour,]:
@@ -41,7 +47,6 @@ class InputHours:
     def get_data(cls, path=os.path.join("manager", "config", "hours.json")) -> _dict_hours_data:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
-
 
 class InputPatients:
     @classmethod
@@ -72,3 +77,28 @@ class InputPatients:
                   open(path, 'w+', encoding='utf-8'),
                   indent=4)
         
+class ConstEvoParams:
+    @classmethod
+    def load(cls,
+             path:str=os.path.join("manager", "config", "evo_parameters.json")
+             ) -> EvoParameters:
+        with open(path, "r", encoding="utf-8") as file:
+            data = json.load(file)
+            return {
+                "num_gens" : data["generations"],
+                "size_gen" : data["generation_size"],
+                "reward_per_patient" : data["reward_per_patient"],
+                "reward_consecutive_hours" : data["reward_consecutive_hours"],
+                "reward_time_limit" : data["reward_time_limit"]
+            }
+    
+    @classmethod
+    def save(cls,
+             data:EvoParameters,
+             path:str=os.path.join("manager", "config", "evo_parameters")
+             )-> None:
+        
+        json.dump(data,
+                  open(path, "w+",encoding="utf-8"),
+                  indent=4
+                  )
