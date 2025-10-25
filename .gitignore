@@ -2,6 +2,9 @@
 /manager/__pycache__
 /.venv
 
+# VS Studio Code
+/.vscode
+
 # Files
 .gitignore
 .gitignore
