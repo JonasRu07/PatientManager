@@ -4,10 +4,12 @@ import threading
 import random as rnd
 from hashlib import sha256
 
+import numpy as np
+
 from .patient import Patient
 from .patient_manager import PatientManager
 from .patient_wrapper import PatientWrapper
-from .static_io import ConstEvoParams
+from .static_io import ConstEvoParams, EvoParameters
 from .week import Week
 from .hour import Hour
 
@@ -38,52 +40,56 @@ class EvoThread(threading.Thread):
         self._stop_event = threading.Event()
         
     def run(self) -> None:
-        
-        print("Thread is Running")
             
-        T = time.time()
         solution_path = SolutionPath(self.patient_manager.get_patients_inside_wrapper().copy(),
-                                        self.week.copy())
+                                     self.week.copy(),
+                                     self.params)
         
         current_path = []
         current_path_evaluation = float("-inf")
         best_path = []
         best_path_evaluation = float("-inf")
         
-        # Generating a good baseline
-        for i in range(self.gen_size):
+        hash_map_counter = 0
+        
+        # Base line
+        T1 = time.perf_counter_ns()
+        for _ in range(self.gen_size):
             self.current_gen += 1
             current_path = solution_path.gen_path()
-            current_path_evaluation = solution_path.evaluate_path(current_path)
-            if current_path_evaluation > best_path_evaluation:
+            current_path_evaluation = solution_path.evaluate(current_path)
+            if best_path_evaluation < current_path_evaluation:
                 best_path_evaluation = current_path_evaluation
                 best_path = current_path
-        print('Baseline completed')
-
-        # Evolving around the best path
-        count_patients = len(self.patient_manager.patients)
-        for depth in range(1, count_patients):
-            options = int((count_patients-depth) * self.gen_size)
-            for i in range(options):
+                
+        
+        for progress in range(self.gens):
+            gen_path = best_path
+            # rel_progress = int(progress/self.gens * len(self.patient_manager.patients))
+            for __ in range(self.gen_size):
                 self.current_gen += 1
-                current_path = solution_path.gen_path_option(best_path, start=depth)
-                current_path_evaluation = solution_path.evaluate_path(current_path)
-                if current_path_evaluation > best_path_evaluation:
-                    best_path_evaluation = current_path_evaluation
-                    best_path = current_path
-                    print(f"New best evaluation = {best_path_evaluation}")
-                    
+                current_path = solution_path.gen_path_option(gen_path, 0)
+                if True: #frozenset(current_path) not in solution_path.exp_paths:
+                    current_path_evaluation = solution_path.evaluate(current_path)
+                    if best_path_evaluation < current_path_evaluation:
+                        best_path_evaluation = current_path_evaluation
+                        best_path = current_path
+                    solution_path.exp_paths[frozenset(current_path)] = current_path_evaluation
+                else:
+                    hash_map_counter += 1
+        T2 = time.perf_counter_ns()
+                
+        print(f"Calculation time: {(T2-T1)/10**9:.2f} seconds. \n"
+                + f"{(T2-T1)/(self.current_gen*10**3):.3f} microseconds per path")
+        
+        print(f"Found hashes: {hash_map_counter}")
+        
         print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients "
                 + f"with an evaluation of {best_path_evaluation}")
-        
-        print(f"Calculation time: {time.time()-T:.2f} seconds. "
-                + f"{(time.time()-T)*1_000_000/self.current_gen:.3f} microseconds per path")
-        
         print(f"Explored a total of {self.current_gen} Paths.")
         
         self.solution = solution_path.get_week(best_path, self.week.copy())
-        
-        print("Done with calculating")
+
         self.done = True
         while not self._stop_event.is_set():
             time.sleep(0.05)
@@ -91,13 +97,7 @@ class EvoThread(threading.Thread):
         self.controller.week = self.solution
         
     def get_max_paths(self) -> int:
-        value = self.gen_size
-        count_patients = len(self.patient_manager.patients)
-        for depth in range(1, count_patients):
-            options = int((count_patients-depth) * self.gen_size)
-            for i in range(options):
-                value += 1
-        return value
+        return self.gen_size + self.gens*self.gen_size
         
     def stop(self):
         self._stop_event.set()
@@ -228,65 +228,53 @@ class Solver:
 class SolutionPath:
     def __init__(self,
                  pw:PatientWrapper,
-                 week:Week) -> None:
+                 week:Week,
+                 params:EvoParameters) -> None:
         self.patient_wrapper = pw.copy()
         self.week = week.copy()
-        
-    def gen_path(self):
-        path = []
-        taken_hours = []
-        
-        patients_id = [i for i in range(len(self.patient_wrapper.patients))]
-        rnd.shuffle(patients_id)
-        for patient_id in patients_id:
-            pos_hours = copy.deepcopy(self.patient_wrapper.patients[patient_id].pos_times)
-            rnd.shuffle(pos_hours)
-            for pos_hour in pos_hours:
-                if pos_hour not in taken_hours:
-                    taken_hours.append(pos_hour)
-                    hour_index = self.patient_wrapper.patients[patient_id].pos_times.index(pos_hour)
+        self.exp_paths = {}
+        self.params = params
+            
+    def gen_path(self): # ~28.005 micro/path
+        path:list[tuple[int, int]] = []
+        patients_idx = [i for i in range(len(self.patient_wrapper.patients))]
+        hours_taken = {} # Dict for faster look up times
+        rnd.shuffle(patients_idx)
+        for patient_idx in patients_idx:
+            pos_times = self.patient_wrapper.patients[patient_idx].pos_times
+            hours_idx = [i for i in range(len(pos_times))]
+            rnd.shuffle(hours_idx)
+            for hour_idx in hours_idx:
+                if pos_times[hour_idx] not in hours_taken:
+                    hours_taken[pos_times[hour_idx]] = True
+                    path.append((patient_idx, hour_idx))
                     break
-            else:
-                # All of the hours the patient can attend to already
-                # have been taken
-                continue
-            path.append([patient_id, hour_index])
         return path
-                
-    def gen_path_option(self, path:list[list[int,]], start:int):
+        
+    def gen_path_option(self,
+                        path:list[tuple[int, int]],
+                        start:int) -> list[tuple[int, int]]:
         path = path[:start]
+        patients_idx = [i for i in range(len(self.patient_wrapper.patients))]
+        hours_taken = {} # Dict for faster look up times
         
-        taken_hours = []
-        patients = self.patient_wrapper.copy().patients
-        ref_patients = self.patient_wrapper.copy().patients
-        # Ignoring times and patients with place
-        for combo in path[:start]:
-            patient = self.patient_wrapper.patients[combo[0]]
-            taken_hours.append(patient.pos_times[combo[1]])
-            patients.remove(patient)
+        for combo in path:
+            patients_idx.remove(combo[0])
+            hours_taken[combo[1]] = True
         
-        rnd.shuffle(patients)
-        for patient in patients:
-            for p_index, ref_patient in enumerate(ref_patients):
-                if ref_patient == patient:
+        rnd.shuffle(patients_idx)
+        for patient_idx in patients_idx:
+            pos_times = self.patient_wrapper.patients[patient_idx].pos_times
+            hours_idx = [i for i in range(len(pos_times))]
+            rnd.shuffle(hours_idx)
+            for hour_idx in hours_idx:
+                if pos_times[hour_idx] not in hours_taken:
+                    hours_taken[pos_times[hour_idx]] = True
+                    path.append((patient_idx, hour_idx))
                     break
-            else:
-                raise ValueError("Cannot find patient in ref_patients")
-            pos_hours = copy.deepcopy(patient.pos_times)
-            rnd.shuffle(pos_hours)
-            for pos_hour in pos_hours:
-                if pos_hour not in taken_hours:
-                    taken_hours.append(pos_hour)
-                    break
-            else:
-                # All of the hours the patient can attend to already
-                # have been taken
-                continue
-            h_index = patient.pos_times.index(pos_hour)
-            path.append([p_index, h_index])
         return path
     
-    def evaluate_path(self, path:list[list[int,]]) -> float | int:
+    def evaluate(self, path:list[tuple[int, int]]) -> float:
         evaluation = 0
         # Constants:
         # The higher absolute number is, the more important is the 
@@ -329,8 +317,8 @@ class SolutionPath:
         evaluation += bad_days*TIME_LIMIT
         
         return evaluation
-    
-    def get_week(self, path:list[list[int,]], week:Week) -> Week:
+        
+    def get_week(self, path:list[tuple[int, int]], week:Week) -> Week:
         for combo in path:
             patient = self.patient_wrapper.patients[combo[0]]
             for hour in week.hours:
