@@ -1,1 +1,522 @@
-[]
+[][
+    {
+        "name": "Alina",
+        "possible hours": [
+            38,
+            4,
+            26,
+            58
+        ]
+    },
+    {
+        "name": "Amalia",
+        "possible hours": [
+            37,
+            24,
+            23
+        ]
+    },
+    {
+        "name": "Amelie",
+        "possible hours": [
+            43,
+            6,
+            54,
+            57,
+            35
+        ]
+    },
+    {
+        "name": "Amira",
+        "possible hours": [
+            74,
+            17,
+            25,
+            38,
+            33,
+            34,
+            26
+        ]
+    },
+    {
+        "name": "Anna",
+        "possible hours": [
+            1,
+            4,
+            11,
+            9
+        ]
+    },
+    {
+        "name": "Antonia",
+        "possible hours": [
+            41,
+            70,
+            65
+        ]
+    },
+    {
+        "name": "Aurelia",
+        "possible hours": [
+            40,
+            26,
+            35,
+            67,
+            58
+        ]
+    },
+    {
+        "name": "Ayla",
+        "possible hours": [
+            7,
+            8,
+            4,
+            40,
+            25
+        ]
+    },
+    {
+        "name": "Charlotte",
+        "possible hours": [
+            37,
+            2,
+            38
+        ]
+    },
+    {
+        "name": "Clara",
+        "possible hours": [
+            55,
+            56,
+            72,
+            75,
+            38
+        ]
+    },
+    {
+        "name": "Elena",
+        "possible hours": [
+            27,
+            2,
+            7,
+            67
+        ]
+    },
+    {
+        "name": "Elina",
+        "possible hours": [
+            48,
+            50,
+            58,
+            54,
+            74,
+            8,
+            37
+        ]
+    },
+    {
+        "name": "Elisa",
+        "possible hours": [
+            33,
+            56,
+            73,
+            10,
+            42,
+            26
+        ]
+    },
+    {
+        "name": "Ella",
+        "possible hours": [
+            71,
+            27,
+            32,
+            33,
+            68
+        ]
+    },
+    {
+        "name": "Emilia",
+        "possible hours": [
+            65,
+            70,
+            26,
+            64
+        ]
+    },
+    {
+        "name": "Emily",
+        "possible hours": [
+            54,
+            43,
+            17
+        ]
+    },
+    {
+        "name": "Emma",
+        "possible hours": [
+            65,
+            67,
+            26,
+            49
+        ]
+    },
+    {
+        "name": "Frieda",
+        "possible hours": [
+            36,
+            3,
+            68
+        ]
+    },
+    {
+        "name": "Hanna",
+        "possible hours": [
+            17,
+            65,
+            8,
+            69
+        ]
+    },
+    {
+        "name": "Hannah",
+        "possible hours": [
+            21,
+            32,
+            69,
+            3,
+            59,
+            75,
+            71,
+            55,
+            24
+        ]
+    },
+    {
+        "name": "Helena",
+        "possible hours": [
+            10,
+            43,
+            58,
+            25,
+            5
+        ]
+    },
+    {
+        "name": "Ida",
+        "possible hours": [
+            23,
+            59,
+            26,
+            39,
+            24,
+            40
+        ]
+    },
+    {
+        "name": "Isabella",
+        "possible hours": [
+            58,
+            39,
+            19,
+            68,
+            36
+        ]
+    },
+    {
+        "name": "Johanna",
+        "possible hours": [
+            36,
+            68,
+            48,
+            74,
+            26,
+            22,
+            4,
+            18,
+            9
+        ]
+    },
+    {
+        "name": "Lara",
+        "possible hours": [
+            73,
+            55,
+            3,
+            66,
+            18
+        ]
+    },
+    {
+        "name": "Laura",
+        "possible hours": [
+            24,
+            19,
+            57,
+            34,
+            66,
+            8,
+            2,
+            32
+        ]
+    },
+    {
+        "name": "Laura",
+        "possible hours": [
+            0,
+            39,
+            20,
+            59,
+            4,
+            54
+        ]
+    },
+    {
+        "name": "Lena",
+        "possible hours": [
+            67,
+            57,
+            75,
+            18,
+            35,
+            58
+        ]
+    },
+    {
+        "name": "Leni",
+        "possible hours": [
+            69,
+            57,
+            73,
+            72,
+            3
+        ]
+    },
+    {
+        "name": "Leonie",
+        "possible hours": [
+            49,
+            42,
+            54,
+            19,
+            20,
+            24,
+            32
+        ]
+    },
+    {
+        "name": "Lilly",
+        "possible hours": [
+            55,
+            42,
+            11,
+            10,
+            67
+        ]
+    },
+    {
+        "name": "Lina",
+        "possible hours": [
+            37,
+            58,
+            43,
+            33,
+            27
+        ]
+    },
+    {
+        "name": "Lotta",
+        "possible hours": [
+            43,
+            73,
+            0,
+            66,
+            42,
+            51,
+            48,
+            18
+        ]
+    },
+    {
+        "name": "Luisa",
+        "possible hours": [
+            69,
+            4,
+            52,
+            27
+        ]
+    },
+    {
+        "name": "Luna",
+        "possible hours": [
+            58,
+            11,
+            69,
+            5
+        ]
+    },
+    {
+        "name": "Maja",
+        "possible hours": [
+            66,
+            1,
+            49,
+            2,
+            8,
+            34,
+            0,
+            16
+        ]
+    },
+    {
+        "name": "Malia",
+        "possible hours": [
+            27,
+            43,
+            20
+        ]
+    },
+    {
+        "name": "Maria",
+        "possible hours": [
+            70,
+            24,
+            35,
+            3,
+            53,
+            11
+        ]
+    },
+    {
+        "name": "Marie",
+        "possible hours": [
+            71,
+            42,
+            34,
+            52
+        ]
+    },
+    {
+        "name": "Mathilda",
+        "possible hours": [
+            68,
+            33,
+            73,
+            48,
+            7,
+            21,
+            42
+        ]
+    },
+    {
+        "name": "Melina",
+        "possible hours": [
+            40,
+            11,
+            75
+        ]
+    },
+    {
+        "name": "Mia",
+        "possible hours": [
+            71,
+            33,
+            1
+        ]
+    },
+    {
+        "name": "Mila",
+        "possible hours": [
+            34,
+            2,
+            11,
+            24
+        ]
+    },
+    {
+        "name": "Mira",
+        "possible hours": [
+            10,
+            0,
+            23
+        ]
+    },
+    {
+        "name": "Nele",
+        "possible hours": [
+            4,
+            68,
+            49,
+            74,
+            10,
+            34,
+            7
+        ]
+    },
+    {
+        "name": "Nora",
+        "possible hours": [
+            16,
+            51,
+            66
+        ]
+    },
+    {
+        "name": "Nora",
+        "possible hours": [
+            38,
+            68,
+            20,
+            10,
+            71,
+            32,
+            36
+        ]
+    },
+    {
+        "name": "Olivia",
+        "possible hours": [
+            70,
+            34,
+            18,
+            21,
+            38,
+            33,
+            1,
+            5
+        ]
+    },
+    {
+        "name": "Sofia",
+        "possible hours": [
+            7,
+            72,
+            11,
+            19,
+            5
+        ]
+    },
+    {
+        "name": "Sophia",
+        "possible hours": [
+            26,
+            27,
+            7,
+            67,
+            36,
+            73,
+            51
+        ]
+    },
+    {
+        "name": "Sophie",
+        "possible hours": [
+            34,
+            38,
+            49,
+            7,
+            50,
+            27
+        ]
+    }
+]
