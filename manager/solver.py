@@ -10,6 +10,7 @@ from .patient import Patient
 from .patient_manager import PatientManager
 from .patient_wrapper import PatientWrapper
 from .static_io import ConstEvoParams, EvoParameters
+from .utils import total_size
 from .week import Week
 from .hour import Hour
 
@@ -65,11 +66,11 @@ class EvoThread(threading.Thread):
         
         for progress in range(self.gens):
             gen_path = best_path
-            # rel_progress = int(progress/self.gens * len(self.patient_manager.patients))
+            rel_progress = int(progress/self.gens * len(self.patient_manager.patients))
             for __ in range(self.gen_size):
                 self.current_gen += 1
-                current_path = solution_path.gen_path_option(gen_path, 0)
-                if True: #frozenset(current_path) not in solution_path.exp_paths:
+                current_path = solution_path.gen_path_option(gen_path, rel_progress)
+                if frozenset(current_path) not in solution_path.exp_paths:
                     current_path_evaluation = solution_path.evaluate(current_path)
                     if best_path_evaluation < current_path_evaluation:
                         best_path_evaluation = current_path_evaluation
@@ -83,6 +84,8 @@ class EvoThread(threading.Thread):
                 + f"{(T2-T1)/(self.current_gen*10**3):.3f} microseconds per path")
         
         print(f"Found hashes: {hash_map_counter}")
+        
+        print(f"Size of hashmap: {total_size(solution_path.exp_paths)/1_000_000} Mb")
         
         print(f"Solution with {len(best_path)} out of {len(self.patient_manager.patients)} patients "
                 + f"with an evaluation of {best_path_evaluation}")
