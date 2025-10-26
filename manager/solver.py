@@ -70,12 +70,12 @@ class EvoThread(threading.Thread):
             for __ in range(self.gen_size):
                 self.current_gen += 1
                 current_path = solution_path.gen_path_option(gen_path, rel_progress)
-                if hash(frozenset(current_path)) not in solution_path.exp_paths:
+                if (frozenset(current_path)) not in solution_path.exp_paths:
                     current_path_evaluation = solution_path.evaluate(current_path)
                     if best_path_evaluation < current_path_evaluation:
                         best_path_evaluation = current_path_evaluation
                         best_path = current_path
-                    solution_path.exp_paths[hash(frozenset(current_path))] = current_path_evaluation
+                    solution_path.exp_paths[(frozenset(current_path))] = current_path_evaluation
                 else:
                     hash_map_counter += 1
                     
