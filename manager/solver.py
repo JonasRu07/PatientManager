@@ -2,9 +2,6 @@ import copy
 import time
 import threading
 import random as rnd
-from hashlib import sha256
-
-import numpy as np
 
 from .patient import Patient
 from .patient_manager import PatientManager
@@ -32,7 +29,8 @@ class EvoThread(threading.Thread):
         
         self.params = ConstEvoParams.load()
         # Each patient can be seen as one gen
-        self.gens = len(self.patient_manager.patients)
+        # Prevent zero division
+        self.gens = max(len(self.patient_manager.patients), 1)
         self.gen_size = int(self.params["sample_size"] / self.gens)
         
         self.max_gen = self.get_max_paths()
@@ -223,9 +221,6 @@ class Solver:
             controller (Controller): Solution will be be asserted to 
                 the week argument
         """
-        # If no patients are there, then there is nothing to sort
-        if len(self.patient_manager.patients) == 0:
-            return
         self.evo_thread = EvoThread(
             self.patient_manager,
             self.week,
