@@ -18,8 +18,7 @@ _dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
                                                       "possible hours" : list[int,]})
 
 class EvoParameters(TypedDict):
-    num_gens : int
-    size_gen : int
+    sample_size : int
     reward_per_patient : int
     reward_consecutive_hours : int
     reward_time_limit : int
@@ -85,8 +84,7 @@ class ConstEvoParams:
         with open(path, "r", encoding="utf-8") as file:
             data = json.load(file)
             return {
-                "num_gens" : data["generations"],
-                "size_gen" : data["generation_size"],
+                "sample_size" : data["sample_size"],
                 "reward_per_patient" : data["reward_per_patient"],
                 "reward_consecutive_hours" : data["reward_consecutive_hours"],
                 "reward_time_limit" : data["reward_time_limit"]

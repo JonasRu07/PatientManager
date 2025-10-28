@@ -31,8 +31,9 @@ class EvoThread(threading.Thread):
         self.solution = None
         
         self.params = ConstEvoParams.load()
-        self.gens = self.params['num_gens']
-        self.gen_size = self.params['size_gen']
+        # Each patient can be seen as one gen
+        self.gens = len(self.patient_manager.patients)
+        self.gen_size = int(self.params["sample_size"] / self.gens)
         
         self.max_gen = self.get_max_paths()
         self.current_gen = 0
@@ -66,10 +67,9 @@ class EvoThread(threading.Thread):
         
         for progress in range(self.gens):
             gen_path = best_path
-            rel_progress = int(progress/self.gens * len(self.patient_manager.patients))
             for __ in range(self.gen_size):
                 self.current_gen += 1
-                current_path = solution_path.gen_path_option(gen_path, rel_progress)
+                current_path = solution_path.gen_path_option(gen_path, progress)
                 if (frozenset(current_path)) not in solution_path.exp_paths:
                     current_path_evaluation = solution_path.evaluate(current_path)
                     if best_path_evaluation < current_path_evaluation:
@@ -223,6 +223,9 @@ class Solver:
             controller (Controller): Solution will be be asserted to 
                 the week argument
         """
+        # If no patients are there, then there is nothing to sort
+        if len(self.patient_manager.patients) == 0:
+            return
         self.evo_thread = EvoThread(
             self.patient_manager,
             self.week,
