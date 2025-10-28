@@ -1,7 +1,6 @@
 {
-    "generations": 100,
-    "generation_size": 100,
-
+    "sample_size" : 100000,
+    
     "reward_per_patient": 10,
     "reward_consecutive_hours": 2.5,
     "reward_time_limit": -10
