@@ -1,6 +1,5 @@
 import os
 import copy
-import pickle
 
 from .static_io import InputHours
 from .hour import Hour
@@ -12,24 +11,11 @@ class Week:
     path: str: (optional) Path to the config file to load the hors from
     hours: list[Hour,]: (optional) Hours containing the week
     """
-    def __init__(self, path:str=os.path.join("manager", "config"), hours:list[Hour, ]=[]) -> None:
+    def __init__(self, path:str=os.path.join("manager", "config", "hours.json"), hours:list[Hour, ]=[]) -> None:
         if hours == []:
-            if os.path.exists(os.path.join(path, "plan.pickle")):
-                try:
-                    self.hours = pickle.load(open(os.path.join(path, "plan.pickle"), "rb+"))
-                    print("Loaded plan.pickle")
-                except BaseExceptionGroup:
-                    self.hours = InputHours.load()
-                    print("Couldn't open pickle; loading Week")
-            else:
-                self.hours = InputHours.load()
-                print("Didn't find pickle; Loading Week")
+            self.hours = InputHours.load(path)
         else:
             self.hours = hours
-            
-    def save(self):
-        pickle.dump(self.hours,
-                    open(os.path.join("manager", "config", "plan.pickle"), "wb+"))
 
     def copy(self) -> 'Week':
         """
