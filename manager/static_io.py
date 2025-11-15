@@ -1,3 +1,9 @@
+"""
+
+
+
+"""
+
 import os
 import json
 
@@ -6,16 +12,22 @@ from typing import TypedDict
 from .hour import Hour
 from .patient import Patient
 
-_dict_day = TypedDict("_dict_day", {"time" : str,
-                                      "duration" : int})
-_dict_hours_data = TypedDict("_dict_hours_data", {"Monday" : list[_dict_day],
-                                                  "Tuesday" : list[_dict_day],
-                                                  "Wednesday" : list[_dict_day],
-                                                  "Thursday" : list[_dict_day],
-                                                  "Friday" : list[_dict_day],})
-
-_dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
-                                                      "possible hours" : list[int,]})
+class DayDict(TypedDict):
+    time : str
+    duration : int
+    
+class WeekDataDict(TypedDict):
+    Monday : list[DayDict]
+    Tuesday : list[DayDict]
+    Wednesday : list[DayDict]
+    Thursday : list[DayDict]
+    Friday : list[DayDict]
+    
+PatientDataDict = TypedDict("PatientDataDict",
+                            {
+                                "name" : str,
+                                "possible hours" : list[int]
+                            })
 
 class EvoParameters(TypedDict):
     sample_size : int
@@ -25,6 +37,10 @@ class EvoParameters(TypedDict):
     
     
 class InputHours:
+    """
+    Loader and Saver for Hours described in the hours.json config.
+    Hours are only saved and read with the time and duration stats
+    """
     @classmethod
     def load(cls, path=os.path.join("manager", "config", "hours.json")) -> list[Hour,]:
         hours = []
@@ -43,7 +59,7 @@ class InputHours:
         return hours
 
     @classmethod
-    def get_data(cls, path=os.path.join("manager", "config", "hours.json")) -> _dict_hours_data:
+    def get_data(cls, path=os.path.join("manager", "config", "hours.json")) -> WeekDataDict:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
@@ -57,7 +73,7 @@ class InputPatients:
         return patients
 
     @classmethod
-    def get_data(cls, path:str=os.path.join("manager", "config", "patients.json")) -> list[_dict_patient_data]:
+    def get_data(cls, path:str=os.path.join("manager", "config", "patients.json")) -> list[PatientDataDict]:
         with open(path, "r", encoding="utf-8") as file:
             return json.load(file)
 
@@ -66,7 +82,7 @@ class InputPatients:
              patients:list[Patient],
              path:str=os.path.join("manager", "config", "patients.json")) -> None:
         
-        data:list[_dict_patient_data] = []
+        data:list[PatientDataDict] = []
         
         for patient in patients:
             data.append({"name" : patient.name,
@@ -105,11 +121,10 @@ class InputPlan:
     @classmethod
     def load(cls, 
              path:str):
-        with open(os.path.join("manager", "config", "patients.json"), "r") as patients_file:
-            patients_data = json.load(patients_file)
-            patients = {}
-            for patient_data in patients_data:
-                patients[patient_data["name"]] = Patient(patient_data["name"], patient_data["possible hours"])
+        patients = InputPatients.load()
+        patients_dict = {}
+        for patient in patients:
+            patients_dict[patient.name] = patient
                 
         with open(os.path.join("manager", "config", "plan.json"), "r") as plan_file:
             plan_data = json.load(plan_file)
@@ -121,10 +136,10 @@ class InputPlan:
                     data_set["duration"]
                 ))
                 if data_set["taken_by"] is not None:
-                    hours[-1].taken_by = patients[data_set["taken_by"]]
-                    
+                    hours[-1].taken_by = patients_dict[data_set["taken_by"]]
+
         return hours
-                    
+        
     @classmethod
     def save(cls,
              hours:list[Hour,]):
