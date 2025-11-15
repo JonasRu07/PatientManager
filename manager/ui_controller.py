@@ -77,7 +77,7 @@ class UIController:
         self.main_ui.load_frame("EditPatient")
         
     def handle_edit_patient_ui(self, index:int) -> None:
-        patient = self.base_controller.patient_manager.patients[index]
+        patient = self.base_controller.patient_manager.get_patients_inside_wrapper().patients[index]
         self.main_ui.load_frame("EditPatient")
         self.main_ui.load_patient(patient)
     
