@@ -61,17 +61,17 @@ class UIController:
         else:
             self.base_controller.edit_patient(patient, new_patient)
         self.main_ui.load_frame("Manager")
-        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
+        self.main_ui.load_patients(self.base_controller.patient_manager.get_patients_inside_wrapper().patients)
         
     def handle_call_delete_patient(self, patient_idx:int) -> None:
         patient = self.base_controller.patient_manager.patients[patient_idx]
         self.base_controller.delete_patient(patient)
-        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
+        self.main_ui.load_patients(self.base_controller.patient_manager.get_patients_inside_wrapper().patients)
               
     # Handle UI-Changes 
     def handle_patient_manager_ui(self) -> None:
         self.main_ui.load_frame("Manager")
-        self.main_ui.load_patients(self.base_controller.patient_manager.patients)
+        self.main_ui.load_patients(self.base_controller.patient_manager.get_patients_inside_wrapper().patients)
         
     def handle_add_patient_ui(self) -> None:
         self.main_ui.load_frame("EditPatient")

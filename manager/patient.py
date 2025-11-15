@@ -15,6 +15,9 @@ class Patient:
     def __str__(self) -> str:
         return  f'Patient: {self.name}; {self.pos_times}'
     
+    def __repr__(self) -> str:
+        return self.__str__()
+    
     def __eq__(self, value: object) -> bool:
         if isinstance(value, Patient):
             return self.ID == value.ID

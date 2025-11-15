@@ -100,3 +100,48 @@ class ConstEvoParams:
                   open(path, "w+",encoding="utf-8"),
                   indent=4
                   )
+        
+class InputPlan:
+    @classmethod
+    def load(cls, 
+             path:str):
+        with open(os.path.join("manager", "config", "patients.json"), "r") as patients_file:
+            patients_data = json.load(patients_file)
+            patients = {}
+            for patient_data in patients_data:
+                patients[patient_data["name"]] = Patient(patient_data["name"], patient_data["possible hours"])
+                
+        with open(os.path.join("manager", "config", "plan.json"), "r") as plan_file:
+            plan_data = json.load(plan_file)
+            hours = []
+            for data_set in plan_data:
+                hours.append(Hour(
+                    data_set["hourID"],
+                    data_set["time"],
+                    data_set["duration"]
+                ))
+                if data_set["taken_by"] is not None:
+                    hours[-1].taken_by = patients[data_set["taken_by"]]
+                    
+        return hours
+                    
+    @classmethod
+    def save(cls,
+             hours:list[Hour,]):
+        data = []
+        for hour in hours:
+            set = {
+                "hourID" : hour.ID,
+                "time" : hour.time,
+                "duration" : hour.duration
+            }
+            if hour.taken_by is None:
+                set["taken_by"] = None
+            else:
+                set["taken_by"] = hour.taken_by.name
+            data.append(set)
+            
+        json.dump(data,
+                  open(os.path.join("manager", "config", "plan.json"), "w"),
+                  indent=4)
+                    

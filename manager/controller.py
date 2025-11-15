@@ -4,7 +4,7 @@ from .patient_wrapper import PatientWrapper
 from .patient_manager import PatientManager
 from .patient import Patient
 from .solver import Solver
-from .static_io import InputPatients
+from .static_io import InputPatients, InputPlan
 from .week import Week
 
 
@@ -46,4 +46,5 @@ class Controller:
     
     def close(self) -> None:
         print('Closing a controller instance')
-        InputPatients.save(self.patient_manager.patients)
+        InputPatients.save(self.patient_manager.get_patients_inside_wrapper().patients)
+        InputPlan.save(self.week.hours)

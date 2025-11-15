@@ -1,7 +1,7 @@
 import os
 import copy
 
-from .static_io import InputHours
+from .static_io import InputHours, InputPlan
 from .hour import Hour
 
 class Week:
@@ -11,9 +11,12 @@ class Week:
     path: str: (optional) Path to the config file to load the hors from
     hours: list[Hour,]: (optional) Hours containing the week
     """
-    def __init__(self, path:str=os.path.join("manager", "config", "hours.json"), hours:list[Hour, ]=[]) -> None:
+    def __init__(self, path:str=os.path.join("manager", "config"), hours:list[Hour, ]=[]) -> None:
         if hours == []:
-            self.hours = InputHours.load(path)
+            if os.path.exists(os.path.join(path, "plan.json")):
+                self.hours = InputPlan.load("")
+            else:
+                self.hours = InputHours.load(os.path.join(path, "hours.json"))
         else:
             self.hours = hours
 

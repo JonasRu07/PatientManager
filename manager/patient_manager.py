@@ -5,23 +5,17 @@ from .patient_wrapper import PatientWrapper
 
 class PatientManager:
     def __init__(self) -> None:
-        self.patients:list[Patient] = InputPatients.load()
-        self.patients.sort(key=lambda x:x.name)
-        
+        patients:list[Patient] = InputPatients.load()
+        self.patients = {}
+        for patient in patients:
+            self.patients[patient.ID] = patient
+            
     def add_patient(self, patient:Patient) -> None:
-        self.patients.append(patient)
-        self.patients.sort(key=lambda x:x.name)
+        self.patients[patient.ID] = patient
         
     def delete_patient(self, target_patient:Patient, _raise:bool=False) -> bool:
-        for index, patient in enumerate(self.patients):
-            if patient == target_patient:
-                self.patients.pop(index)
-                return True
-
-        if _raise:
-            raise ValueError('Patient was not in list')
+        self.patients.pop(target_patient.ID)
+        return True
         
-        return False
-    
     def get_patients_inside_wrapper(self):
-        return PatientWrapper(patients=self.patients)
+        return PatientWrapper(patients=list(self.patients.values()))

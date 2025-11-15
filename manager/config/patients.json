@@ -250,19 +250,6 @@
     {
         "name": "Laura",
         "possible hours": [
-            24,
-            19,
-            57,
-            34,
-            66,
-            8,
-            2,
-            32
-        ]
-    },
-    {
-        "name": "Laura",
-        "possible hours": [
             0,
             39,
             20,
@@ -451,14 +438,6 @@
             10,
             34,
             7
-        ]
-    },
-    {
-        "name": "Nora",
-        "possible hours": [
-            16,
-            51,
-            66
         ]
     },
     {
