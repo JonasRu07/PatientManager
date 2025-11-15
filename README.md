@@ -34,6 +34,11 @@ __Installation:__
     python -m pip install -e .
     ```
 
+    Microsoft may be an ass and stop that due it thinking any script that exits shall be malware. In that case you can try to force them to do it by running:
+    ```
+    Set-ExecutionPolicy Unrestricted -Scope Process
+    ```
+
 __Setup:__
 
 * In the path PatientManager/manager/config are 2 file. 
