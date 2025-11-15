@@ -90,7 +90,7 @@ __Bugs:__
 
     *Fix:*
     
-    Go into the folder :manager/config/ and delete the plan.json file.
+    Go into the folder: manager/config/ and delete the plan.json file.
 
     If that didn't fixed it, you may need to delete the content of the /patient.json file also and replace it with "[ ]". 
     As you will lose all data of the patients, you may want to make a backup, so you can redo your work.
