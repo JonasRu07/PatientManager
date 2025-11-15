@@ -41,9 +41,10 @@ __Installation:__
 
 __Setup:__
 
-* In the path PatientManager/manager/config are 2 file. 
+* Before running it the first time, you need to setup your work hours. It may be a bit complicate, but there is an improvement planned for version 1.1.0. 
+But for now please do the following:
 
-    __hours.json__
+    __open manager/config/hours.json__
 
     Enter all of your Hours you offer here.
     With installation there is are hours added as a baseline for what you need to do, but here is the base structure:
@@ -54,7 +55,7 @@ __Setup:__
         "Monday" : [
             {"time":"0700",
             duration:50},
-            {"time":"0700",
+            {"time":"0800",
             duration:50},
             
         ],
@@ -63,42 +64,9 @@ __Setup:__
     }
     ```
 
-    time is a for letter long string with the first two the hour, the last   two the minutes
-    duration is how long the hour is
-    The order the days, or the hours on each day is not important, but it makes it easier to fill out the patients
-    and is later in the README assumed to be for each day from earliest to latest
-    
-    __patients.json:__
+    "time" is a four letter long string with the first two the hour, the last two the minutes.
 
-    Enter all patient you have here
-    With installation there is are hours added as a baseline for what you need to do, but here is the base structure:
-
-    ```
-    [
-        {
-            "name":"Name of patient",
-            "possible hours" : [0, 2, 16, 72]
-        },
-         {
-             "name":"Name of patient",
-             "possible hours" : [0, 2, 16, 72]
-         },
-         ...
-    ]
-    ```
-
-    name is simply the name of the patient
-    possible hours is a list [] of all hours the patient can attend to.
-    The hours are defined with integers, later called IDs
-    The ID is calculated by the day (Mo -> 0, Tu -> 16, We -> 32, ...) and the number of what hour is it on that day.
-    And yes, I start counting at 0 ; )
-
-    Example:
-    
-    You have Thursday 4 Hours, and Peter can come to the second. Than the ID you need to enter is 49
-    (48, because Thursday is 48, + 1, because it is the second hour of the day)
-
-
+    "duration" is how long the hour is.
 
 
 __Run:__
@@ -114,4 +82,17 @@ __Run:__
     python manager 
     ```
 
+__Bugs:__
+    
+* The patients, which are shown in the window are different than the patients in the weekly plan:
+
+    It may be that the stored plan is out of date and cannot be updated.
+
+    *Fix:*
+    
+    Go into the folder :manager/config/ and delete the plan.json file.
+
+    If that didn't fixed it, you may need to delete the content of the /patient.json file also and replace it with "[ ]". 
+    As you will lose all data of the patients, you may want to make a backup, so you can redo your work.
+    
 
