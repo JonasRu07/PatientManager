@@ -95,3 +95,16 @@ __Bugs:__
     If that didn't fixed it, you may need to delete the content of the /patient.json file also and replace it with "[ ]". 
     As you will lose all data of the patients, you may want to make a backup, so you can redo your work.
     
+* Program gets stuck after clicking "Find all solutions"
+
+    Program refuses to react to interaction; your OS may even say the app isn't responding anymore.
+
+    Problem:
+
+    Due to the exponential runtime of the function the function takes a very long time to find the nest solution. If you experience this behavior please try one of the following fixes:
+
+    Fixes:
+
+    * Reduce the number of patients, well obvious not always reasonable
+
+    * Using the "Find Evo answers" Button. This Button executes an optimized function to find a reasonable good solution. It may not be the absolute best, but most of the time good enough
