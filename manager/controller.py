@@ -12,8 +12,9 @@ class Controller:
     def __init__(self) -> None:
         self.config_path = os.path.join("manager", "config")
 
-        self.week = Week(os.path.join(self.config_path, "hours.json"))
-        print(f"Loaded {len(self.week.hours)} hours from config")
+        self.week = Week()
+        print(self.week.__dict__)
+        print(f"Loaded {self.week.hours} hours from config")
         self.patient_manager = PatientManager()
         print(f"Loaded {len(self.patient_manager.patients)} patients from config")
         
@@ -47,3 +48,4 @@ class Controller:
     def close(self) -> None:
         print('Closing a controller instance')
         InputPatients.save(self.patient_manager.patients)
+        self.week.save()
