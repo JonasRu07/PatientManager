@@ -1,8 +1,8 @@
 
-This is a program for solving the problem of having multiple Patients, which have weekly repeating appointments.
-Each patients has a number of possible hours s/he can attend to. There are currently 2 algorithms to find solution.
-The first one, only finds hours only one patient can attend to.
-The second one solves for every possible solution and choses one. A solution is considered an arrangement of ALL patients. Due to the fact, that this algorithm is very! slow, I can only recommend it for a small number of patients.
+__Patient Manager__
+
+The program is made for organizations, which have weakly repeating appointments with patients.
+
 
 If you encounter any issues with this program, you can leave a detailed description inside the issue page ([this link](https://github.com/JonasRu07/PatientManager/issues)).
 
@@ -95,4 +95,3 @@ __Bugs:__
     If that didn't fixed it, you may need to delete the content of the /patient.json file also and replace it with "[ ]". 
     As you will lose all data of the patients, you may want to make a backup, so you can redo your work.
     
-
