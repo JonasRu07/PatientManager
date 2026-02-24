@@ -286,7 +286,8 @@ class SolutionPath:
         # can only be triggered 5 times. So the time limit has less 
         # of an effect than the number of patients even if the value
         # is absolute bigger
-        NUMBER_PATIENTS = 10
+        NUMBER_PATIENTS = 50
+        NUMBER_PRIO_HOURS = 25
         CONSECUTIVE_HOURS = 2.5
         TIME_LIMIT = -10
         
@@ -317,6 +318,14 @@ class SolutionPath:
                 if day[-1] - day[0] > 8:
                     bad_days += 1
         evaluation += bad_days*TIME_LIMIT
+
+        # Prefer prio hours
+        prios = 0
+        for combo in path:
+            patient = self.patient_wrapper.patients[combo[0]]
+            if patient.pos_times[combo[1]] in patient.prio_hours:
+                prios += 1
+        evaluation += NUMBER_PRIO_HOURS * prios
         
         return evaluation
         
