@@ -15,7 +15,8 @@ _dict_hours_data = TypedDict("_dict_hours_data", {"Monday" : list[_dict_day],
                                                   "Friday" : list[_dict_day],})
 
 _dict_patient_data = TypedDict("_dict_patient_data", {"name" : str,
-                                                      "possible hours" : list[int,]})
+                                                      "possible hours" : list[int,],
+                                                      "prioritized hours": list[int]})
 
 class EvoParameters(TypedDict):
     sample_size : int
@@ -53,7 +54,10 @@ class InputPatients:
         patients = []
         data = InputPatients.get_data(path)
         for patient in data:
-            patients.append(Patient(patient["name"], patient["possible hours"]))
+            patients.append(Patient(
+                patient["name"],
+                patient["possible hours"],
+                patient.get("prioritized hours", [])))
         return patients
 
     @classmethod
@@ -70,7 +74,8 @@ class InputPatients:
         
         for patient in patients:
             data.append({"name" : patient.name,
-                         "possible hours" : patient.pos_times})
+                         "possible hours" : patient.pos_times,
+                         "prioritized hours": patient.prio_hours})
         
         json.dump(data,
                   open(path, 'w+', encoding='utf-8'),
