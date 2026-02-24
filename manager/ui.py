@@ -566,6 +566,7 @@ class FrameEditPatient(BaseFrame):
         
         self.patient_name = ''
         self.pos_hours:list[int] = []
+        self.prio_hours:list[int] = []
         self.patient = Patient(self.patient_name, self.pos_hours)
         self.week = Week()
         
@@ -605,34 +606,46 @@ class FrameEditPatient(BaseFrame):
         
         # Show Hours
         self.bs_hours:list[tk.Button] = []
-        
         for index, hour in enumerate(self.week.hours):
-            colour = "green" if hour.ID in self.patient.pos_times else "red"
+            # colour = "green"if hour.ID in self.patient.pos_times else "red"
             self.bs_hours.append(tk.Button(master=self.sf_time_table.main,
-                                          background=colour,
+                                          background="#FF00FF",
                                           foreground='#F0F0F0',
                                           relief='ridge',
-                                          text='' if hour.taken_by is None else hour.taken_by.name,
-                                          command=lambda i=index : self.add_hour_to_pos_hours(i)))
-                                          #text=f'{hour.time} // {hour.duration}'))
+                                          command=lambda i=index : self.add_hour_to_pos_hours(i),
+                                          text=''))
+                                          # text='' if hour.taken_by is None else hour.taken_by.name,
+                                          # text=f'{hour.time} // {hour.duration}'))
         self.sf_time_table.place_hours(self.bs_hours, self.week.hours) # type:  ignore -> Idk why it complains
-            
+        
         
     def call_confirm(self):
         self.controller.handle_call_confirm_edit_patient(
             self.patient,
             self.e_patient_name.get(),
-            self.pos_hours)
+            self.pos_hours,
+            self.prio_hours)
             
-            
+    def gen_patient_from_input(self):
+        name = self.e_patient_name.get()
+        pos_hours = self.pos_hours
+        prio_hours = self.prio_hours
+        return Patient(name, pos_hours, prio_hours)
+
     def add_hour_to_pos_hours(self, index:int) -> None:
         print(self.week.hours[index].ID)
-        if self.week.hours[index].ID in self.pos_hours:
-            self.pos_hours.remove(self.week.hours[index].ID)
+        hour_id = self.week.hours[index].ID
+        if hour_id in self.prio_hours:
+            self.prio_hours.remove(hour_id)
+            self.pos_hours.remove(hour_id)
             self.bs_hours[index].configure(background='red',
                                            activebackground='red')
+        elif not hour_id in self.pos_hours:
+            self.pos_hours.append(hour_id)
+            self.bs_hours[index].configure(background='yellow',
+                                           activebackground='yellow')
         else:
-            self.pos_hours.append(self.week.hours[index].ID)
+            self.prio_hours.append(hour_id)
             self.bs_hours[index].configure(background='green',
                                            activebackground='green')
     
@@ -645,18 +658,23 @@ class FrameEditPatient(BaseFrame):
         Args:
             patient (Patient): Patient to edit
         """
+        print(patient)
         self.patient = patient
         self.patient_name = patient.name
         self.pos_hours = patient.pos_times
         self.e_patient_name.insert('end', patient.name)
         for index, button in enumerate(self.bs_hours):
-            if self.week.hours[index].ID in self.pos_hours:
-                button.configure(background='green',
-                                 activebackground='green')
+            if self.week.hours[index].ID in self.patient.prio_hours:
+                colour = "green"
+            elif not self.week.hours[index].ID in self.patient.pos_times:
+                colour = "red"
             else:
-                button.configure(background='red',
-                                 activebackground='red')
-    
+                colour = "yellow"
+
+            button.configure(
+                background=colour,
+                activebackground=colour
+            )
     def load(self,) -> None:
         self.main.place(x=0, y=0)
         
@@ -666,9 +684,10 @@ class FrameEditPatient(BaseFrame):
         successful creation ofd patient all data needs to be cleared
         to not have side effects.
         """
+        self.patient = Patient('', [], [])
         self.patient_name = ''
         self.pos_hours = []
-        self.patient = Patient(self.patient_name, self.pos_hours)
+        self.prio_hours = []
         self.e_patient_name.delete(0, 'end')
         self.e_patient_name.insert('end', '')
         for button in self.bs_hours:
@@ -752,7 +771,8 @@ class SubFramePatientList(BaseFrame):
             None
         """
         
-        self.patients = patients
+        self.patients = sorted(patients, key=lambda x:x.name)
+
         # Delete old labels
         for b_patient, b_delete in zip(self.bs_patients, self.bs_deletion):
             b_patient.destroy()
@@ -765,7 +785,7 @@ class SubFramePatientList(BaseFrame):
         self.scrollable.place_configure(height=5 + len(patients)*25 + 5)
         self.root.update()
         
-        for index, patient in enumerate(patients):
+        for index, patient in enumerate(self.patients):
             self.bs_patients.append(tk.Button(master=self.scrollable,
                                              background='#ACAB00',
                                              foreground='#000000',
@@ -784,7 +804,7 @@ class SubFramePatientList(BaseFrame):
         self.controller.handle_call_delete_patient(index)
 
     def call_edit_patient(self, index:int) -> None:
-        self.controller.handle_edit_patient_ui(index)
+        self.controller.handle_edit_patient_ui(self.patients[index])
         
 class SubFrameCalculatingSolution(BaseFrame):
     """

@@ -49,13 +49,17 @@ class UIController:
 
 
     # UI-Calls
-    def handle_call_confirm_edit_patient(self, patient:Patient, name:str, pos_hours:list[int]) -> None:
+    def handle_call_confirm_edit_patient(self,
+                                         patient:Patient,
+                                         name:str,
+                                         pos_hours:list[int],
+                                         prio_hours:list[int]) -> None:
         # Name should not be empty and only chars and spaces
         if name == '': return 
         for split in name.split(' '):
             if not split.isalpha():
                 return
-        new_patient = Patient(name, pos_hours)
+        new_patient = Patient(name, pos_hours, prio_hours)
         if patient.name == '':
             self.base_controller.add_patient(new_patient)
         else:
@@ -76,8 +80,7 @@ class UIController:
     def handle_add_patient_ui(self) -> None:
         self.main_ui.load_frame("EditPatient")
         
-    def handle_edit_patient_ui(self, index:int) -> None:
-        patient = self.base_controller.patient_manager.patients[index]
+    def handle_edit_patient_ui(self, patient:Patient) -> None:
         self.main_ui.load_frame("EditPatient")
         self.main_ui.load_patient(patient)
     

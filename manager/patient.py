@@ -20,7 +20,7 @@ class Patient:
         self.ID = sha256(self.name.encode("utf-8")).hexdigest()
                               
     def __str__(self) -> str:
-        return  f'Patient: {self.name}; {self.pos_times}'
+        return  f'Patient: {self.name}; {self.pos_times}; {self.prio_hours}'
     
     def __repr__(self) -> str:
         return self.__str__()
